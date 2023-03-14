@@ -41,6 +41,17 @@ android {
 
 dependencies {
 
+    // Credentials
+    implementation("androidx.credentials:credentials:1.0.0-alpha03")
+    // optional - needed for credentials support from play services, for devices running
+    // Android 13 and below.
+    implementation("androidx.credentials:credentials-play-services-auth:1.0.0-alpha03")
+
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
+    implementation ("io.reactivex.rxjava3:rxjava:3.1.5")
+    implementation ("com.jakewharton.rxbinding4:rxbinding:4.0.0")
+    implementation ("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
+
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
