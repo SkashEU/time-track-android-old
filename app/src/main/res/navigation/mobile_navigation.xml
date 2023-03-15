@@ -3,23 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_timer">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.skash.timetrack.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
-
+        android:id="@+id/navigation_timer"
+        android:name="com.skash.timetrack.feature.timer.TimerFragment"
+        android:label="TimerFragment"
+        tools:layout="@layout/fragment_timer" />
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.skash.timetrack.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
-
+        android:id="@+id/navigation_overview"
+        android:name="com.skash.timetrack.feature.overview.OverviewFragment"
+        android:label="OverviewFragment"
+        tools:layout="@layout/fragment_overview" />
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.skash.timetrack.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_settings"
+        android:name="com.skash.timetrack.feature.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

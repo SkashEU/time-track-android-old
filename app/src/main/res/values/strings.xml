@@ -1,12 +1,31 @@
 <resources>
     <string name="app_name">TimeTrack</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+
+    <string name="title_timer">Timer</string>
+    <string name="title_overview">Overview</string>
+    <string name="title_settings">Settings</string>
+
+    <!-- Error Types -->
+    <string name="error_alert_title">Error</string>
+    <string name="alert_ok_button_title">OK</string>
+    <string name="error_type_user_unauthenticated">Email or Password wrong</string>
+    <string name="error_type_projects_fetch">Failed to fetch Projects</string>
 
     <!-- Login -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="text_login_button">Login</string>
     <string name="text_register_button">Register</string>
+
+    <!-- Settings -->
+    <string name="title_project_settings">Projects</string>
+    <string name="title_user_settings">User</string>
+
+    <!-- Timer -->
+    <string name="title_project_timer">Projekte</string>
+    <string name="title_work_time_timer">Worktime</string>
+    <string name="title_project_time_channel">Project Time Notifications</string>
+    <string name="title_timer_notification">Timer is running</string>
+    <string name="title_timer_button_start">Start</string>
+    <string name="title_timer_button_stop">Stop</string>
 </resources>

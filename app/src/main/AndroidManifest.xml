@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".TimeTrack"
         android:allowBackup="true"
@@ -18,9 +21,7 @@
             android:shell="true"
             tools:targetApi="q" />
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name="com.skash.timetrack.feature.auth.login.LoginActivity"
             android:exported="true">
@@ -30,6 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.skash.timetrack.feature.service.ProjectTimeForegroundService" />
     </application>
 
 </manifest>

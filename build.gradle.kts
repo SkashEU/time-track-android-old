@@ -5,4 +5,6 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.0" apply false
     id("com.android.test") version "8.1.0-alpha09" apply false
     id("androidx.baselineprofile") version "1.2.0-SNAPSHOT" apply false
+    id("com.google.dagger.hilt.android") version "2.45" apply false
+    id("org.jetbrains.kotlin.kapt") version "1.8.10"
 }

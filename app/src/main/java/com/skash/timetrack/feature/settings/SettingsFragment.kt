@@ -1,26 +1,28 @@
-package com.skash.timetrack.feature.timer
+package com.skash.timetrack.feature.settings
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.skash.timetrack.R
-import com.skash.timetrack.databinding.FragmentTimerBinding
-import com.skash.timetrack.feature.adapter.TimerViewPagerAdapter
+import com.skash.timetrack.databinding.FragmentSettingsBinding
+import com.skash.timetrack.feature.adapter.SettingsViewPagerAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
-class TimerFragment : Fragment(R.layout.fragment_timer) {
+@AndroidEntryPoint
+class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
-    private var _binding: FragmentTimerBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: TimerViewPagerAdapter
+    private lateinit var adapter: SettingsViewPagerAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentTimerBinding.bind(view)
+        _binding = FragmentSettingsBinding.bind(view)
 
-        adapter = TimerViewPagerAdapter(this)
+        adapter = SettingsViewPagerAdapter(this)
 
         binding.viewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
