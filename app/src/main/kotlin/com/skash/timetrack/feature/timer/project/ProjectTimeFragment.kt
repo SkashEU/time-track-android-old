@@ -20,6 +20,9 @@ import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
 import com.skash.timetrack.feature.service.ProjectTimeForegroundService
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
 
@@ -40,6 +43,9 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
         }
     )
 
+    private val dayFormatter = SimpleDateFormat("EEEE", Locale.getDefault())
+    private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
     private val subscriptions = CompositeDisposable()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,6 +54,7 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
         _binding = FragmentProjectTimeBinding.bind(view)
 
         bindActions()
+        setupView()
 
         viewModel.timerActionLiveData.observe(viewLifecycleOwner) { shouldStartTimer ->
             if (shouldStartTimer) {
@@ -56,7 +63,6 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
             }
 
             requireContext().pauseProjectTimer()
-
         }
 
         viewModel.timerStatusLiveData.observe(viewLifecycleOwner) { status ->
@@ -68,8 +74,6 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
 
             updateTimer(status.elapsedTime)
         }
-
-
     }
 
     private fun bindActions() {
@@ -123,6 +127,12 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
         binding.timeTextView.text = ProjectTimeForegroundService.formatElapsedTime(
             hours, minutes, seconds
         )
+    }
+
+    private fun setupView() {
+        val today = Date()
+        binding.dayTextView.text = dayFormatter.format(today)
+        binding.dateTextView.text = dateFormatter.format(today)
     }
 
 

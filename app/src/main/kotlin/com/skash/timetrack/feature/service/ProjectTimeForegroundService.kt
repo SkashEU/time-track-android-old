@@ -1,8 +1,11 @@
 package com.skash.timetrack.feature.service
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Color
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -89,7 +92,7 @@ class ProjectTimeForegroundService : Service() {
 
         startForeground(NOTIFICATION_ID, createNotification())
         foregroundNotificationUpdateTimer = Timer()
-        cyclicallyBroadcastElapsedTime()
+        cyclicallyPostForegroundNotification()
     }
 
     private fun moveToBackground() {
@@ -126,13 +129,29 @@ class ProjectTimeForegroundService : Service() {
         }, 0, 1000)
     }
 
+    private fun cyclicallyPostForegroundNotification() {
+        foregroundNotificationUpdateTimer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                Log.d(javaClass.name, "Posting foreground notification")
+                postNotification()
+            }
+
+        }, 0, 1000)
+    }
+
+    private fun postNotification() {
+        getSystemService(NotificationManager::class.java).notify(
+            NOTIFICATION_ID,
+            createNotification()
+        )
+    }
+
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.title_timer_notification))
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setOngoing(true)
-            //.setColor(Color.parseColor("#BEAEE2"))
             .setSmallIcon(R.drawable.icn_timer)
             .setContentText(formatElapsedTime())
             .build()
