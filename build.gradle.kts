@@ -1,4 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("io.realm:realm-gradle-plugin:10.13.2-transformer-api")
+    }
+}
+
 plugins {
     id("com.android.application") version "8.1.0-alpha09" apply false
     id("com.android.library") version "8.1.0-alpha09" apply false

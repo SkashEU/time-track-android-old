@@ -14,6 +14,7 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
 
     object UserUnauthenticated : ErrorType(R.string.error_type_user_unauthenticated)
     object ProjectFetch : ErrorType(R.string.error_type_projects_fetch)
+    object ProjectTimeSave : ErrorType(R.string.error_type_project_time_create)
 
 }
 

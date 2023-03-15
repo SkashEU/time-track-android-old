@@ -1,8 +1,13 @@
 package com.skash.timetrack
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -26,6 +31,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val permissionRequestLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { hasPermission ->
+        Log.d(javaClass.name, "POST_NOTIFICATIONS permission requested. Accepted? $hasPermission")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,6 +54,9 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+        requestPermissions()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -51,5 +65,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun findNavHostFragment(): NavHostFragment {
         return supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+    }
+
+    private fun requestPermissions() {
+        //Request POST_NOTIFICATIONS Permission to start foreground service on android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionRequestLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 }

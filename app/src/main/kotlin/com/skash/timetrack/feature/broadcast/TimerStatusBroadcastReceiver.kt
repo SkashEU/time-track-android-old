@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.skash.timetrack.core.model.TimerStatus
-import com.skash.timetrack.feature.service.ProjectTimeForegroundService
+import com.skash.timetrack.feature.service.ProjectTimerService
 
 class TimerStatusBroadcastReceiver(
     private val onStateChanged: (TimerStatus) -> Unit = {}
@@ -15,14 +15,14 @@ class TimerStatusBroadcastReceiver(
             return
         }
 
-        if (intent.action != ProjectTimeForegroundService.TIMER_STATUS) {
+        if (intent.action != ProjectTimerService.TIMER_STATUS) {
             return
         }
 
         val status = TimerStatus(
-            intent.getBooleanExtra(ProjectTimeForegroundService.IS_TIMER_RUNNING, false),
-            intent.getIntExtra(ProjectTimeForegroundService.TIME_ELAPSED, 0),
-            intent.getIntExtra(ProjectTimeForegroundService.TIME_ELAPSED, 0)
+            intent.getBooleanExtra(ProjectTimerService.IS_TIMER_RUNNING, false),
+            intent.getIntExtra(ProjectTimerService.TIME_ELAPSED, 0),
+            intent.getBooleanExtra(ProjectTimerService.IS_TIMER_FINISHED, false)
         )
 
         onStateChanged(status)

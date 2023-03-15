@@ -3,7 +3,7 @@ package com.skash.timetrack.feature.broadcast
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.skash.timetrack.feature.service.ProjectTimeForegroundService
+import com.skash.timetrack.feature.service.ProjectTimerService
 
 class ElapsedTimeBroadcastReceiver(
     private val onTimeElapsed: (Int) -> Unit
@@ -13,10 +13,10 @@ class ElapsedTimeBroadcastReceiver(
             return
         }
 
-        if (intent.action != ProjectTimeForegroundService.TIMER_TICK) {
+        if (intent.action != ProjectTimerService.TIMER_TICK) {
             return
         }
 
-        onTimeElapsed(intent.getIntExtra(ProjectTimeForegroundService.TIME_ELAPSED, 0))
+        onTimeElapsed(intent.getIntExtra(ProjectTimerService.TIME_ELAPSED, 0))
     }
 }

@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.skash.timetrack.feature.service.ProjectTimeForegroundService" />
+        <service android:name="com.skash.timetrack.feature.service.ProjectTimerService" />
     </application>
 
 </manifest>

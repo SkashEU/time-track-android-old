@@ -4,8 +4,6 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.content.res.Resources
-import android.graphics.Color
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -15,7 +13,7 @@ import com.skash.timetrack.core.exception.MissingTimerActionException
 import java.util.Timer
 import java.util.TimerTask
 
-class ProjectTimeForegroundService : Service() {
+class ProjectTimerService : Service() {
 
     companion object {
         // Channel ID for notifications
@@ -33,6 +31,7 @@ class ProjectTimeForegroundService : Service() {
         const val TIMER_ACTION = "TIMER_ACTION"
         const val TIME_ELAPSED = "TIME_ELAPSED"
         const val IS_TIMER_RUNNING = "IS_TIMER_RUNNING"
+        const val IS_TIMER_FINISHED = "IS_TIMER_FINISHED"
 
         // Intent Actions
         const val TIMER_TICK = "TIMER_TICK"
@@ -81,7 +80,8 @@ class ProjectTimeForegroundService : Service() {
         foregroundNotificationUpdateTimer.cancel()
         isTimerRunning = false
         stopForeground(STOP_FOREGROUND_REMOVE)
-        postStatus()
+        postStatus(true)
+        timeElapsed = 0
     }
 
     private fun moveToForeground() {
@@ -100,11 +100,12 @@ class ProjectTimeForegroundService : Service() {
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
-    private fun postStatus() {
+    private fun postStatus(isFinished: Boolean = false) {
         val statusIntent = Intent().apply {
             action = TIMER_STATUS
             putExtra(IS_TIMER_RUNNING, isTimerRunning)
             putExtra(TIME_ELAPSED, timeElapsed)
+            putExtra(IS_TIMER_FINISHED, isFinished)
         }
 
         LocalBroadcastManager.getInstance(
@@ -122,7 +123,7 @@ class ProjectTimeForegroundService : Service() {
                 }
 
                 LocalBroadcastManager.getInstance(
-                    this@ProjectTimeForegroundService
+                    this@ProjectTimerService
                 ).sendBroadcast(timerIntent)
             }
 

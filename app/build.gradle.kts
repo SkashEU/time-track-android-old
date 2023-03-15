@@ -6,6 +6,8 @@ plugins {
     id("androidx.baselineprofile")
 }
 
+apply(plugin = "realm-android")
+
 android {
     namespace = "com.skash.timetrack"
     compileSdk = 33
@@ -58,9 +60,12 @@ dependencies {
 
     // Rx
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    implementation ("io.reactivex.rxjava3:rxjava:3.1.5")
-    implementation ("com.jakewharton.rxbinding4:rxbinding:4.0.0")
-    implementation ("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    implementation("com.jakewharton.rxbinding4:rxbinding:4.0.0")
+    implementation("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
+
+    // Realm
+    implementation("io.realm:realm-gradle-plugin:10.13.2-transformer-api")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

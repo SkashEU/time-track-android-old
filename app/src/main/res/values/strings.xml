@@ -10,6 +10,7 @@
     <string name="alert_ok_button_title">OK</string>
     <string name="error_type_user_unauthenticated">Email or Password wrong</string>
     <string name="error_type_projects_fetch">Failed to fetch Projects</string>
+    <string name="error_type_project_time_create">Failed to save time</string>
 
     <!-- Login -->
     <string name="hint_email">Email</string>

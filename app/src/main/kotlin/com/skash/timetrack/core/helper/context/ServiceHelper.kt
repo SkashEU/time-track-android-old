@@ -2,67 +2,65 @@ package com.skash.timetrack.core.helper.context
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.skash.timetrack.feature.service.ProjectTimeForegroundService
+import com.skash.timetrack.feature.service.ProjectTimerService
 
 fun Context.getProjectTimerStatus() {
-    val stopwatchService = Intent(
+    val projectService = Intent(
         this,
-        ProjectTimeForegroundService::class.java
+        ProjectTimerService::class.java
     )
-    stopwatchService.putExtra(
-        ProjectTimeForegroundService.TIMER_ACTION,
-        ProjectTimeForegroundService.GET_STATUS
+    projectService.putExtra(
+        ProjectTimerService.TIMER_ACTION,
+        ProjectTimerService.GET_STATUS
     )
 
-    startService(stopwatchService)
+    startService(projectService)
 }
 
 fun Context.startProjectTimer() {
-    val stopwatchService = Intent(
+    val projectService = Intent(
         this,
-        ProjectTimeForegroundService::class.java
+        ProjectTimerService::class.java
     )
-    stopwatchService.putExtra(
-        ProjectTimeForegroundService.TIMER_ACTION,
-        ProjectTimeForegroundService.START
+    projectService.putExtra(
+        ProjectTimerService.TIMER_ACTION,
+        ProjectTimerService.START
     )
 
-    startService(stopwatchService)
+    startService(projectService)
 }
 
-fun Context.pauseProjectTimer() {
-    val stopwatchService = Intent(
+fun Context.stopProjectTimer() {
+    val projectService = Intent(
         this,
-        ProjectTimeForegroundService::class.java
+        ProjectTimerService::class.java
     )
-    stopwatchService.putExtra(
-        ProjectTimeForegroundService.TIMER_ACTION,
-        ProjectTimeForegroundService.STOP
+    projectService.putExtra(
+        ProjectTimerService.TIMER_ACTION,
+        ProjectTimerService.STOP
     )
 
-    startService(stopwatchService)
+    startService(projectService)
 }
 
 fun Context.moveProjectTimerToForeground() {
-    val stopwatchService = Intent(this, ProjectTimeForegroundService::class.java)
-    stopwatchService.putExtra(
-        ProjectTimeForegroundService.TIMER_ACTION,
-        ProjectTimeForegroundService.MOVE_TO_FOREGROUND
+    val projectService = Intent(this, ProjectTimerService::class.java)
+    projectService.putExtra(
+        ProjectTimerService.TIMER_ACTION,
+        ProjectTimerService.MOVE_TO_FOREGROUND
     )
-    startService(stopwatchService)
+    startService(projectService)
 }
 
 fun Context.moveProjectTimerToBackground() {
-    val stopwatchService = Intent(
+    val projectService = Intent(
         this,
-        ProjectTimeForegroundService::class.java
+        ProjectTimerService::class.java
     )
-    stopwatchService.putExtra(
-        ProjectTimeForegroundService.TIMER_ACTION,
-        ProjectTimeForegroundService.MOVE_TO_BACKGROUND
+    projectService.putExtra(
+        ProjectTimerService.TIMER_ACTION,
+        ProjectTimerService.MOVE_TO_BACKGROUND
     )
 
-    startService(stopwatchService)
+    startService(projectService)
 }

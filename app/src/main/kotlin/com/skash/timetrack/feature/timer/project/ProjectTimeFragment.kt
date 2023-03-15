@@ -2,6 +2,7 @@ package com.skash.timetrack.feature.timer.project
 
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -11,19 +12,23 @@ import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.context.getProjectTimerStatus
 import com.skash.timetrack.core.helper.context.moveProjectTimerToBackground
 import com.skash.timetrack.core.helper.context.moveProjectTimerToForeground
-import com.skash.timetrack.core.helper.context.pauseProjectTimer
 import com.skash.timetrack.core.helper.context.startProjectTimer
+import com.skash.timetrack.core.helper.context.stopProjectTimer
+import com.skash.timetrack.core.helper.state.handle
+import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.TimerStatus
 import com.skash.timetrack.databinding.FragmentProjectTimeBinding
 import com.skash.timetrack.feature.broadcast.ElapsedTimeBroadcastReceiver
 import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
-import com.skash.timetrack.feature.service.ProjectTimeForegroundService
+import com.skash.timetrack.feature.service.ProjectTimerService
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@AndroidEntryPoint
 class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
 
     private var _binding: FragmentProjectTimeBinding? = null
@@ -46,6 +51,10 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
     private val dayFormatter = SimpleDateFormat("EEEE", Locale.getDefault())
     private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
+    private val loadingDialog by lazy {
+        DefaultLoadingDialog(requireContext())
+    }
+
     private val subscriptions = CompositeDisposable()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,7 +71,7 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
                 return@observe
             }
 
-            requireContext().pauseProjectTimer()
+            requireContext().stopProjectTimer()
         }
 
         viewModel.timerStatusLiveData.observe(viewLifecycleOwner) { status ->
@@ -72,7 +81,22 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
                 binding.timerButton.setText(R.string.title_timer_button_start)
             }
 
-            updateTimer(status.elapsedTime)
+            if (status.isFinished.not()) {
+                updateTimer(status.elapsedTime)
+                return@observe
+            }
+
+            viewModel.createProjectTime(
+                binding.descriptionEditText.text.toString(),
+                status.elapsedTime
+            )
+        }
+
+        viewModel.projectTimeCreationStateLiveData.observe(viewLifecycleOwner) { creationState ->
+            creationState.handle(requireContext(), loadingDialog, onSuccess = {
+                Log.d(javaClass.name, "Saved Project Time")
+                updateTimer(0)
+            })
         }
     }
 
@@ -108,14 +132,14 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
 
     private fun registerBroadcastReceiver() {
         val statusFilter = IntentFilter()
-        statusFilter.addAction(ProjectTimeForegroundService.TIMER_STATUS)
+        statusFilter.addAction(ProjectTimerService.TIMER_STATUS)
 
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(timerStatusBroadcastReceiver, statusFilter)
 
         // Receiving time values from service
         val timeFilter = IntentFilter()
-        timeFilter.addAction(ProjectTimeForegroundService.TIMER_TICK)
+        timeFilter.addAction(ProjectTimerService.TIMER_TICK)
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(elapsedTimeBroadcastReceiver, timeFilter)
     }
@@ -124,7 +148,7 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
         val hours: Int = (elapsedTime / 60) / 60
         val minutes: Int = (elapsedTime / 60)
         val seconds: Int = (elapsedTime % 60)
-        binding.timeTextView.text = ProjectTimeForegroundService.formatElapsedTime(
+        binding.timeTextView.text = ProjectTimerService.formatElapsedTime(
             hours, minutes, seconds
         )
     }
@@ -134,7 +158,6 @@ class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
         binding.dayTextView.text = dayFormatter.format(today)
         binding.dateTextView.text = dateFormatter.format(today)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
