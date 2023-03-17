@@ -19,5 +19,25 @@
         android:id="@+id/navigation_settings"
         android:name="com.skash.timetrack.feature.settings.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/navigate_to_manage_project"
+            app:destination="@id/navigation_manage_projects" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/navigation_manage_projects"
+        android:name="com.skash.timetrack.feature.settings.project.manage.ManageProjectFragment"
+        android:label="ManageProjectFragment" >
+        <argument
+            android:name="project"
+            app:argType="com.skash.timetrack.core.model.Project"
+            app:nullable="true" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/navigation_projects"
+        android:name="com.skash.timetrack.feature.settings.project.ProjectsFragment"
+        android:label="ProjectsFragment" >
+    </fragment>
 </navigation>

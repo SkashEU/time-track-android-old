@@ -3,6 +3,7 @@ package com.skash.timetrack
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import com.skash.timetrack.core.cache.seeder.ProjectColorSeeder
 import com.skash.timetrack.feature.service.ProjectTimerService
 import dagger.hilt.android.HiltAndroidApp
 import io.realm.Realm
@@ -24,6 +25,7 @@ class TimeTrack : Application() {
         val config = RealmConfiguration.Builder()
             .allowQueriesOnUiThread(false)
             .allowWritesOnUiThread(false)
+            .initialData(ProjectColorSeeder())
             .build()
 
         Realm.setDefaultConfiguration(config)

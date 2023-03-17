@@ -96,6 +96,10 @@ class ProjectTimerService : Service() {
     }
 
     private fun moveToBackground() {
+        if (isTimerRunning.not()) {
+            Log.d(javaClass.name, "Ignoring moveToBackground request. Timer is not running...")
+            return
+        }
         foregroundNotificationUpdateTimer.cancel()
         stopForeground(STOP_FOREGROUND_REMOVE)
     }

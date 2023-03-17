@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.helper.state.loading.LoadingDialog
+import com.skash.timetrack.core.model.ProjectModifyWrapper
 import com.skash.timetrack.databinding.FragmentProjectsBinding
 import com.skash.timetrack.feature.adapter.ProjectListAdapter
+import com.skash.timetrack.feature.settings.SettingsFragmentDirections
+import com.skash.timetrack.feature.settings.project.manage.ManageProjectFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,7 +25,9 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
     private val viewModel: ProjectsViewModel by viewModels()
 
     private val adapter = ProjectListAdapter(onProjectSelected = {
-
+        findNavController().navigate(
+            SettingsFragmentDirections.navigateToManageProject(it)
+        )
     })
 
     private val loadingDialog: LoadingDialog by lazy {
@@ -33,12 +39,31 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
 
         _binding = FragmentProjectsBinding.bind(view)
 
+        bindActions()
+        observeProjectChanges()
+
         binding.recyclerView.adapter = adapter
 
         viewModel.projectsLiveData.observe(viewLifecycleOwner) { state ->
             state.handle(requireContext(), loadingDialog, onSuccess = { projects ->
                 adapter.submitList(projects)
             })
+        }
+    }
+
+    private fun bindActions() {
+        binding.addFab.setOnClickListener {
+            findNavController().navigate(
+                SettingsFragmentDirections.navigateToManageProject(null)
+            )
+        }
+    }
+
+    private fun observeProjectChanges() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<ProjectModifyWrapper>(
+            ManageProjectFragment.PROJECT
+        )?.observe(viewLifecycleOwner) {
+            viewModel.fetchProjects()
         }
     }
 

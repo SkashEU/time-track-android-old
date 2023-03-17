@@ -3,8 +3,10 @@ package com.skash.timetrack.core.di
 import com.skash.timetrack.core.repository.ApiAuthRepository
 import com.skash.timetrack.core.repository.ApiProjectRepository
 import com.skash.timetrack.core.repository.AuthRepository
+import com.skash.timetrack.core.repository.ProjectColorRepository
 import com.skash.timetrack.core.repository.ProjectRepository
 import com.skash.timetrack.core.repository.ProjectTimeRepository
+import com.skash.timetrack.core.repository.RealmProjectColorRepository
 import com.skash.timetrack.core.repository.RealmProjectTimeRepository
 import dagger.Module
 import dagger.Provides
@@ -36,6 +38,14 @@ object AppModule {
         scheduler: Scheduler
     ): ProjectTimeRepository {
         return RealmProjectTimeRepository(scheduler)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProjectColorRepository(
+        scheduler: Scheduler
+    ): ProjectColorRepository {
+        return RealmProjectColorRepository(scheduler)
     }
 
     @Provides

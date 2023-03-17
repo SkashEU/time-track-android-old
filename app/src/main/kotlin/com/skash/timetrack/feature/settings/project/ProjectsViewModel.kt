@@ -7,6 +7,7 @@ import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.Project
+import com.skash.timetrack.core.model.ProjectModifyWrapper
 import com.skash.timetrack.core.repository.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -34,7 +35,7 @@ class ProjectsViewModel @Inject constructor(
         fetchProjects()
     }
 
-    private fun fetchProjects() {
+    fun fetchProjects() {
         projectRepository.fetchProjects()
             .toState {
                 ErrorType.ProjectFetch

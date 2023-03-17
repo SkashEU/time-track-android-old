@@ -32,7 +32,7 @@ class ProjectViewHolder(
         binding.titleTextView.text = project.title
         binding.colorDotImageView.setColorFilter(Color.parseColor(project.color))
 
-        binding.root.setOnClickListener {
+        binding.cardView.setOnClickListener {
             onProjectSelected(project)
         }
     }

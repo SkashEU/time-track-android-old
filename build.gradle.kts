@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath("io.realm:realm-gradle-plugin:10.13.2-transformer-api")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3")
     }
 }
 

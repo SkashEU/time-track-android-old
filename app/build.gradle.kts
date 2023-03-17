@@ -4,6 +4,8 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("androidx.baselineprofile")
+    id("kotlin-parcelize")
+    id("androidx.navigation.safeargs")
 }
 
 apply(plugin = "realm-android")
@@ -63,6 +65,7 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
     implementation("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     implementation("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx3:1.6.4")
 
     // Realm
     implementation("io.realm:realm-gradle-plugin:10.13.2-transformer-api")

@@ -7,13 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.CreateCredentialResponse
 import androidx.credentials.CreatePasswordRequest
 import androidx.credentials.CredentialManager
-import androidx.credentials.CredentialManagerCallback
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.GetPasswordOption
 import androidx.credentials.PasswordCredential
-import androidx.credentials.exceptions.CreateCredentialException
-import androidx.credentials.exceptions.GetCredentialException
 import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.MainActivity
 import com.skash.timetrack.core.helper.state.handle
@@ -23,6 +20,8 @@ import com.skash.timetrack.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import kotlinx.coroutines.rx3.rxObservable
 
 
 @AndroidEntryPoint
@@ -54,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel.authStateLiveData.observe(this) { authState ->
             authState.handle(this, loadingDialog, onSuccess = {
                 // TODO: Integrate CredentialManager
-                // registerPassword()
+                registerPassword()
                 launchMainActivity()
             })
         }
@@ -72,27 +71,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun fetchUserCredentials() {
+
         val getPasswordOption = GetPasswordOption()
 
         val getCredentialRequest = GetCredentialRequest(
             listOf(getPasswordOption)
         )
 
-        credentialManager.getCredentialAsync(
-            getCredentialRequest,
-            this,
-            cancellationSignal = null,
-            executor = mainExecutor,
-            callback = object :
-                CredentialManagerCallback<GetCredentialResponse, GetCredentialException> {
-                override fun onError(e: GetCredentialException) {
-                    Log.e(javaClass.name, "Error fetching credenials", e)
-                }
-
-                override fun onResult(result: GetCredentialResponse) {
-                    handleSignIn(result)
-                }
-            })
+        rxObservable<GetCredentialResponse> {
+            credentialManager.getCredential(getCredentialRequest, this@LoginActivity)
+        }.subscribeBy(
+            onNext = { response ->
+                handleSignIn(response)
+            },
+            onError = { error ->
+                Log.e(javaClass.name, "Error fetching credenials", error)
+            }
+        ).addTo(subscriptions)
     }
 
     private fun handleSignIn(result: GetCredentialResponse) {
@@ -119,24 +114,17 @@ class LoginActivity : AppCompatActivity() {
             binding.passwordEditText.text.toString()
         )
 
-        credentialManager.createCredentialAsync(
-            createPasswordRequest,
-            this,
-            null,
-            mainExecutor,
-            object :
-                CredentialManagerCallback<CreateCredentialResponse, CreateCredentialException> {
-                override fun onError(e: CreateCredentialException) {
-                    Log.d(javaClass.name, "Saved creds error", e)
-                    launchMainActivity()
-                }
-
-                override fun onResult(result: CreateCredentialResponse) {
-                    Log.d(javaClass.name, "Saved creds")
-                    launchMainActivity()
-                }
+        rxObservable<CreateCredentialResponse> {
+            credentialManager.createCredential(createPasswordRequest, this@LoginActivity)
+        }.subscribeBy(
+            onNext = {
+                launchMainActivity()
+            },
+            onError = { error ->
+                Log.d(javaClass.name, "Failed to save credentials", error)
+                launchMainActivity()
             }
-        )
+        ).addTo(subscriptions)
     }
 
     private fun launchMainActivity() {
