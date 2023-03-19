@@ -38,7 +38,7 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
             })
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

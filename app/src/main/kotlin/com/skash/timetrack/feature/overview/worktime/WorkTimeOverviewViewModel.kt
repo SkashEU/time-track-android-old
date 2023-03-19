@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.overview.task
+package com.skash.timetrack.feature.overview.worktime
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -6,9 +6,9 @@ import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
-import com.skash.timetrack.core.model.Task
-import com.skash.timetrack.core.model.TaskGroup
-import com.skash.timetrack.core.repository.TaskRepository
+import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.model.WorkTimeGroup
+import com.skash.timetrack.core.repository.WorkTimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -19,45 +19,45 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class TasksOverviewViewModel @Inject constructor(
-    private val taskRepository: TaskRepository
+class WorkTimeOverviewViewModel @Inject constructor(
+    private val workTimeRepository: WorkTimeRepository
 ) : ViewModel() {
 
-    private val taskGroupsSubject = BehaviorSubject.create<State<List<TaskGroup>>>()
-    private val taskGroupsStream = taskGroupsSubject.hide()
-    private val _taskGroupsLiveData = SingleLiveEvent<State<List<TaskGroup>>>()
-    val taskGroupsLiveData: LiveData<State<List<TaskGroup>>> get() = _taskGroupsLiveData
+    private val workTimeGroupsSubject = BehaviorSubject.create<State<List<WorkTimeGroup>>>()
+    private val workTimeGroupsStream = workTimeGroupsSubject.hide()
+    private val _workTimeGroupsLiveData = SingleLiveEvent<State<List<WorkTimeGroup>>>()
+    val workTimeGroupsLiveData: LiveData<State<List<WorkTimeGroup>>> get() = _workTimeGroupsLiveData
 
     private val subscriptions = CompositeDisposable()
 
     init {
-        taskGroupsStream
-            .subscribe(_taskGroupsLiveData::postValue)
+        workTimeGroupsStream
+            .subscribe(_workTimeGroupsLiveData::postValue)
             .addTo(subscriptions)
 
-        fetchTasks()
+        fetchWorkTimes()
     }
 
-    private fun fetchTasks() {
-        taskRepository.fetchTasks()
+    private fun fetchWorkTimes() {
+        workTimeRepository.fetchWorkTimes()
             .flatMap {
-                groupTasks(it)
+                groupWorkTimes(it)
             }
             .toState {
                 ErrorType.TaskFetch
             }
             .subscribe {
-                taskGroupsSubject.onNext(it)
+                workTimeGroupsSubject.onNext(it)
             }
             .addTo(subscriptions)
     }
 
-    private fun groupTasks(tasks: List<Task>): Observable<List<TaskGroup>> {
+    private fun groupWorkTimes(workTimes: List<WorkTime>): Observable<List<WorkTimeGroup>> {
         // TODO: Deeper grouping by same project at same day etc
-        val groupedTasks = tasks.groupBy {
+        val groupedTasks = workTimes.groupBy {
             it.startedAt.toInstant().truncatedTo(ChronoUnit.DAYS)
         }.map { (time, tasks) ->
-            TaskGroup(
+            WorkTimeGroup(
                 Date(time.toEpochMilli()),
                 tasks
             )

@@ -8,6 +8,8 @@ import com.skash.timetrack.core.repository.ProjectRepository
 import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.RealmProjectColorRepository
 import com.skash.timetrack.core.repository.RealmTaskRepository
+import com.skash.timetrack.core.repository.RealmWorkTimeRepository
+import com.skash.timetrack.core.repository.WorkTimeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +48,14 @@ object AppModule {
         scheduler: Scheduler
     ): ProjectColorRepository {
         return RealmProjectColorRepository(scheduler)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkTimeRepository(
+        scheduler: Scheduler
+    ): WorkTimeRepository {
+        return RealmWorkTimeRepository(scheduler)
     }
 
     @Provides
