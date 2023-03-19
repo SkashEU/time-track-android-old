@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         navController = findNavHostFragment().navController
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_timer, R.id.navigation_overview, R.id.navigation_settings
+                R.id.navigation_overview, R.id.navigation_settings
             )
         )
 

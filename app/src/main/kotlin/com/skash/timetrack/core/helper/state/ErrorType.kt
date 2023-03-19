@@ -18,6 +18,7 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object NoProjectColorSelected: ErrorType(R.string.error_type_project_color_empty)
     object NoProjectTitleSelected: ErrorType(R.string.error_type_project_title_empty)
     object ProjectModify: ErrorType(R.string.error_type_project_modify_failed)
+    object TaskFetch: ErrorType(R.string.error_type_tasks_fetch)
 
 }
 

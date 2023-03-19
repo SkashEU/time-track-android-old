@@ -14,6 +14,7 @@
     <string name="error_type_project_color_empty">Please select a color.</string>
     <string name="error_type_project_title_empty">Please select a title. </string>
     <string name="error_type_project_modify_failed">Failed to modify project.</string>
+    <string name="error_type_tasks_fetch">Failed to fetch tasks.</string>
 
     <!-- Login -->
     <string name="hint_email">Email</string>
@@ -24,6 +25,10 @@
     <!-- Settings -->
     <string name="title_project_settings">Projects</string>
     <string name="title_user_settings">User</string>
+
+    <!-- Overview -->
+    <string name="title_overview_tasks">Tasks</string>
+    <string name="title_overview_work_time">Work Time</string>
 
     <!-- Timer -->
     <string name="title_project_timer">Projekte</string>

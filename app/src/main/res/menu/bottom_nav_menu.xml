@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_timer"
-        android:icon="@drawable/icn_timer"
-        android:title="@string/title_timer" />
-
-    <item
         android:id="@+id/navigation_overview"
         android:icon="@drawable/icn_overview"
         android:title="@string/title_overview" />

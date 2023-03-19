@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.timer.project
+package com.skash.timetrack.feature.timer.task
 
 import android.content.IntentFilter
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.context.getProjectTimerStatus
@@ -29,12 +30,12 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class ProjectTimeFragment : Fragment(R.layout.fragment_project_time) {
+class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project_time) {
 
     private var _binding: FragmentProjectTimeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ProjectTimeViewModel by viewModels()
+    private val viewModel: TaskTimerViewModel by viewModels()
 
     private val timerStatusBroadcastReceiver = TimerStatusBroadcastReceiver(
         onStateChanged = {

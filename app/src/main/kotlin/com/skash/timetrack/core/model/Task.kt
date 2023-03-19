@@ -2,7 +2,7 @@ package com.skash.timetrack.core.model
 
 import java.util.Date
 
-data class ProjectTime(
+data class Task(
     val id: Int = 0,
     val project: Project?,
     val description: String,

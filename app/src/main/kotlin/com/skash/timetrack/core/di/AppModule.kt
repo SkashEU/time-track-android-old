@@ -5,9 +5,9 @@ import com.skash.timetrack.core.repository.ApiProjectRepository
 import com.skash.timetrack.core.repository.AuthRepository
 import com.skash.timetrack.core.repository.ProjectColorRepository
 import com.skash.timetrack.core.repository.ProjectRepository
-import com.skash.timetrack.core.repository.ProjectTimeRepository
+import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.RealmProjectColorRepository
-import com.skash.timetrack.core.repository.RealmProjectTimeRepository
+import com.skash.timetrack.core.repository.RealmTaskRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,8 +36,8 @@ object AppModule {
     @Singleton
     fun provideProjectTimeRepository(
         scheduler: Scheduler
-    ): ProjectTimeRepository {
-        return RealmProjectTimeRepository(scheduler)
+    ): TaskRepository {
+        return RealmTaskRepository(scheduler)
     }
 
     @Provides

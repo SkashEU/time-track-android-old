@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.timer.project
+package com.skash.timetrack.feature.timer.task
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -8,9 +8,9 @@ import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.Project
-import com.skash.timetrack.core.model.ProjectTime
+import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TimerStatus
-import com.skash.timetrack.core.repository.ProjectTimeRepository
+import com.skash.timetrack.core.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -20,8 +20,8 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class ProjectTimeViewModel @Inject constructor(
-    private val projectTimeRepository: ProjectTimeRepository
+class TaskTimerViewModel @Inject constructor(
+    private val projectTimeRepository: TaskRepository
 ) : ViewModel() {
 
     private val timerStatusSubject = BehaviorSubject.create<TimerStatus>()
@@ -67,14 +67,14 @@ class ProjectTimeViewModel @Inject constructor(
     fun createProjectTime(description: String, duration: Int) {
         val project = projectSubject.value
         val now = Date()
-        val time = ProjectTime(
+        val time = Task(
             project = project,
             description = description,
             startedAt = now.minusSeconds(duration),
             endedAt = now,
             duration = duration
         )
-        projectTimeRepository.createProjectTime(time)
+        projectTimeRepository.createTask(time)
             .toState {
                 ErrorType.ProjectTimeSave
             }

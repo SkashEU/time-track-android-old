@@ -1,12 +1,12 @@
 package com.skash.timetrack.core.cache.model
 
-import com.skash.timetrack.core.model.ProjectTime
+import com.skash.timetrack.core.model.Task
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import org.bson.types.ObjectId
 import java.util.Date
 
-open class RealmProjectTime(
+open class RealmTask(
     @PrimaryKey
     var id: ObjectId = ObjectId.get(),
     var project: RealmProject? = null,
@@ -16,7 +16,7 @@ open class RealmProjectTime(
     var duration: Int = 0
 ) : RealmObject() {
 
-    constructor(model: ProjectTime) : this(
+    constructor(model: Task) : this(
         project = model.project?.let { RealmProject(it) },
         description = model.description,
         startedAt = model.startedAt,
