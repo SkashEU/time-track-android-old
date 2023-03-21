@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel.authStateLiveData.observe(this) { authState ->
             authState.handle(this, loadingDialog, onSuccess = {
                 // TODO: Integrate CredentialManager
-                registerPassword()
+                // registerPassword()
                 launchMainActivity()
             })
         }
