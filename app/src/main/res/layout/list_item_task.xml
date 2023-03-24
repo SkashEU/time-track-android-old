@@ -67,8 +67,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/color_dot_image_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/project_title_text_view"
-                app:layout_constraintTop_toTopOf="@id/color_dot_image_view"
-                app:layout_goneMarginStart="@dimen/activity_horizontal_margin" />
+                app:layout_constraintTop_toTopOf="@id/color_dot_image_view" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
