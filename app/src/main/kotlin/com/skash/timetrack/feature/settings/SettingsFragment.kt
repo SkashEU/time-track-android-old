@@ -22,9 +22,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         _binding = FragmentSettingsBinding.bind(view)
 
-        adapter = SettingsViewPagerAdapter(this)
+        adapter = SettingsViewPagerAdapter(childFragmentManager, lifecycle)
 
         binding.viewPager.adapter = adapter
+        binding.viewPager.offscreenPageLimit = 2
+
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.setText(adapter.getTitleForPosition(position))
         }.attach()

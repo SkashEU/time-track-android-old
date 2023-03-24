@@ -31,6 +31,7 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
         _binding = FragmentOverviewTasksBinding.bind(view)
 
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
 
         viewModel.taskGroupsLiveData.observe(viewLifecycleOwner) { state ->
             state.handle(requireContext(), loadingDialog, onSuccess = { groups ->

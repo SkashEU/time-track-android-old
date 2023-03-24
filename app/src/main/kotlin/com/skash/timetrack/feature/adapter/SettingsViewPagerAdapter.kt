@@ -1,14 +1,18 @@
 package com.skash.timetrack.feature.adapter
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.skash.timetrack.R
 import com.skash.timetrack.feature.settings.project.ProjectsFragment
 import com.skash.timetrack.feature.settings.user.UserFragment
 
 class SettingsViewPagerAdapter(
-    fragment: Fragment
-) : FragmentStateAdapter(fragment) {
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
+
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int): Fragment {

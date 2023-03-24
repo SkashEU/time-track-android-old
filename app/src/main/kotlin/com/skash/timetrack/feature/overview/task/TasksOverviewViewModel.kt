@@ -1,6 +1,7 @@
 package com.skash.timetrack.feature.overview.task
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
@@ -25,7 +26,7 @@ class TasksOverviewViewModel @Inject constructor(
 
     private val taskGroupsSubject = BehaviorSubject.create<State<List<TaskGroup>>>()
     private val taskGroupsStream = taskGroupsSubject.hide()
-    private val _taskGroupsLiveData = SingleLiveEvent<State<List<TaskGroup>>>()
+    private val _taskGroupsLiveData = MutableLiveData<State<List<TaskGroup>>>()
     val taskGroupsLiveData: LiveData<State<List<TaskGroup>>> get() = _taskGroupsLiveData
 
     private val subscriptions = CompositeDisposable()

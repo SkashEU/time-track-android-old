@@ -43,6 +43,7 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
         observeProjectChanges()
 
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
 
         viewModel.projectsLiveData.observe(viewLifecycleOwner) { state ->
             state.handle(requireContext(), loadingDialog, onSuccess = { projects ->

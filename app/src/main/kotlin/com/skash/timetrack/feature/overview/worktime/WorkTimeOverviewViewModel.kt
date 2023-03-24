@@ -1,6 +1,7 @@
 package com.skash.timetrack.feature.overview.worktime
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
@@ -25,7 +26,7 @@ class WorkTimeOverviewViewModel @Inject constructor(
 
     private val workTimeGroupsSubject = BehaviorSubject.create<State<List<WorkTimeGroup>>>()
     private val workTimeGroupsStream = workTimeGroupsSubject.hide()
-    private val _workTimeGroupsLiveData = SingleLiveEvent<State<List<WorkTimeGroup>>>()
+    private val _workTimeGroupsLiveData = MutableLiveData<State<List<WorkTimeGroup>>>()
     val workTimeGroupsLiveData: LiveData<State<List<WorkTimeGroup>>> get() = _workTimeGroupsLiveData
 
     private val subscriptions = CompositeDisposable()

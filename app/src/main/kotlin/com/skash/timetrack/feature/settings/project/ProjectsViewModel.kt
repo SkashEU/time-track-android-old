@@ -1,6 +1,7 @@
 package com.skash.timetrack.feature.settings.project
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
@@ -22,7 +23,7 @@ class ProjectsViewModel @Inject constructor(
 
     private val projectsSubject = BehaviorSubject.create<State<List<Project>>>()
     private val projectsStream = projectsSubject.hide()
-    private val _projectsLiveData = SingleLiveEvent<State<List<Project>>>()
+    private val _projectsLiveData = MutableLiveData<State<List<Project>>>()
     val projectsLiveData: LiveData<State<List<Project>>> get() = _projectsLiveData
 
     private val subscriptions = CompositeDisposable()
