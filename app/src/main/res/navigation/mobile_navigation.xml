@@ -8,13 +8,14 @@
     <fragment
         android:id="@+id/navigation_overview"
         android:name="com.skash.timetrack.feature.overview.OverviewFragment"
-        android:label="OverviewFragment"
+        android:label="Overview"
         tools:layout="@layout/fragment_overview" />
+
     <fragment
-        android:id="@+id/navigation_settings"
-        android:name="com.skash.timetrack.feature.settings.SettingsFragment"
-        android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings">
+        android:id="@+id/navigation_manage"
+        android:name="com.skash.timetrack.feature.manage.ManageFragment"
+        android:label="Manage"
+        tools:layout="@layout/fragment_manage" >
         <action
             android:id="@+id/navigate_to_manage_project"
             app:destination="@id/navigation_manage_projects" />
@@ -22,8 +23,9 @@
 
     <dialog
         android:id="@+id/navigation_manage_projects"
-        android:name="com.skash.timetrack.feature.settings.project.manage.ManageProjectFragment"
-        android:label="ManageProjectFragment">
+        android:name="com.skash.timetrack.feature.manage.project.manage.ManageProjectFragment"
+        android:label="Manage Project"
+        tools:layout="@layout/fragment_manage_project">
         <argument
             android:name="project"
             app:argType="com.skash.timetrack.core.model.Project"
@@ -32,6 +34,20 @@
 
     <fragment
         android:id="@+id/navigation_projects"
-        android:name="com.skash.timetrack.feature.settings.project.ProjectsFragment"
-        android:label="ProjectsFragment"></fragment>
+        android:name="com.skash.timetrack.feature.manage.project.ProjectsFragment"
+        android:label="Projects"
+        tools:layout="@layout/fragment_projects" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.skash.timetrack.feature.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_team"
+        android:name="com.skash.timetrack.feature.manage.team.TeamFragment"
+        android:label="Team"
+        tools:layout="@layout/fragment_team" />
+
 </navigation>

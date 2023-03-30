@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.settings.project
+package com.skash.timetrack.feature.manage.project
 
 import android.os.Bundle
 import android.view.View
@@ -9,11 +9,12 @@ import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.helper.state.loading.LoadingDialog
+import com.skash.timetrack.core.model.Project
 import com.skash.timetrack.core.model.ProjectModifyWrapper
 import com.skash.timetrack.databinding.FragmentProjectsBinding
 import com.skash.timetrack.feature.adapter.ProjectListAdapter
-import com.skash.timetrack.feature.settings.SettingsFragmentDirections
-import com.skash.timetrack.feature.settings.project.manage.ManageProjectFragment
+import com.skash.timetrack.feature.manage.ManageFragmentDirections
+import com.skash.timetrack.feature.manage.project.manage.ManageProjectFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,10 +25,8 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
 
     private val viewModel: ProjectsViewModel by viewModels()
 
-    private val adapter = ProjectListAdapter(onProjectSelected = {
-        findNavController().navigate(
-            SettingsFragmentDirections.navigateToManageProject(it)
-        )
+    private val adapter = ProjectListAdapter(onProjectSelected = { project ->
+        navigateToManageProject(project)
     })
 
     private val loadingDialog: LoadingDialog by lazy {
@@ -54,9 +53,7 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
 
     private fun bindActions() {
         binding.addFab.setOnClickListener {
-            findNavController().navigate(
-                SettingsFragmentDirections.navigateToManageProject(null)
-            )
+            navigateToManageProject(null)
         }
     }
 
@@ -66,6 +63,14 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
         )?.observe(viewLifecycleOwner) {
             viewModel.fetchProjects()
         }
+    }
+
+    private fun navigateToManageProject(project: Project?) {
+        findNavController().navigate(
+            ManageFragmentDirections.navigateToManageProject(
+                project
+            )
+        )
     }
 
     override fun onDestroyView() {

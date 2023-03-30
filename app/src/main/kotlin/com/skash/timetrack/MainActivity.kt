@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -48,7 +47,9 @@ class MainActivity : AppCompatActivity() {
         navController = findNavHostFragment().navController
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_overview, R.id.navigation_settings
+                R.id.navigation_overview,
+                R.id.navigation_manage,
+                R.id.navigation_profile
             )
         )
 

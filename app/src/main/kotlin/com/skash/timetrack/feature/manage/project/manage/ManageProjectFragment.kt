@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.settings.project.manage
+package com.skash.timetrack.feature.manage.project.manage
 
 import android.app.Dialog
 import android.os.Bundle

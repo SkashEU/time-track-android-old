@@ -15,10 +15,14 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object UserUnauthenticated : ErrorType(R.string.error_type_user_unauthenticated)
     object ProjectFetch : ErrorType(R.string.error_type_projects_fetch)
     object ProjectTimeSave : ErrorType(R.string.error_type_project_time_create)
-    object NoProjectColorSelected: ErrorType(R.string.error_type_project_color_empty)
-    object NoProjectTitleSelected: ErrorType(R.string.error_type_project_title_empty)
-    object ProjectModify: ErrorType(R.string.error_type_project_modify_failed)
-    object TaskFetch: ErrorType(R.string.error_type_tasks_fetch)
+    object NoProjectColorSelected : ErrorType(R.string.error_type_project_color_empty)
+    object NoProjectTitleSelected : ErrorType(R.string.error_type_project_title_empty)
+    object ProjectModify : ErrorType(R.string.error_type_project_modify_failed)
+    object TaskFetch : ErrorType(R.string.error_type_tasks_fetch)
+    object NoWorkspaceSelected : ErrorType(R.string.error_type_no_workspace_selected)
+    object WorkspaceMemberFetch : ErrorType(R.string.error_type_member_fetch)
+    object NoOrganizationSelected : ErrorType(R.string.error_type_no_organization_selected)
+    object ClientsFetch : ErrorType(R.string.error_type_clients_fetch)
 
 }
 

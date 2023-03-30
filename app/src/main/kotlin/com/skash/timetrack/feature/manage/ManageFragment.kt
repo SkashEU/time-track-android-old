@@ -1,28 +1,25 @@
-package com.skash.timetrack.feature.settings
+package com.skash.timetrack.feature.manage
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.skash.timetrack.R
-import com.skash.timetrack.databinding.FragmentSettingsBinding
-import com.skash.timetrack.feature.adapter.SettingsViewPagerAdapter
-import dagger.hilt.android.AndroidEntryPoint
+import com.skash.timetrack.databinding.FragmentManageBinding
+import com.skash.timetrack.feature.adapter.ManageViewPagerAdapter
 
-@AndroidEntryPoint
-class SettingsFragment : Fragment(R.layout.fragment_settings) {
+class ManageFragment : Fragment(R.layout.fragment_manage) {
 
-    private var _binding: FragmentSettingsBinding? = null
+    private var _binding: FragmentManageBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: SettingsViewPagerAdapter
+    private lateinit var adapter: ManageViewPagerAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentSettingsBinding.bind(view)
-
-        adapter = SettingsViewPagerAdapter(childFragmentManager, lifecycle)
+        _binding = FragmentManageBinding.bind(view)
+        adapter = ManageViewPagerAdapter(childFragmentManager, lifecycle)
 
         binding.viewPager.adapter = adapter
         binding.viewPager.offscreenPageLimit = 2

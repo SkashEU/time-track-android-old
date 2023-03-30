@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.settings.project
+package com.skash.timetrack.feature.manage.project
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

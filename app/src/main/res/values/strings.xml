@@ -3,7 +3,8 @@
 
     <string name="title_timer">Timer</string>
     <string name="title_overview">Overview</string>
-    <string name="title_settings">Settings</string>
+    <string name="title_manage">Manage</string>
+    <string name="title_profile">Profile</string>
 
     <!-- Error Types -->
     <string name="error_alert_title">Error</string>
@@ -15,6 +16,10 @@
     <string name="error_type_project_title_empty">Please select a title. </string>
     <string name="error_type_project_modify_failed">Failed to modify project.</string>
     <string name="error_type_tasks_fetch">Failed to fetch tasks.</string>
+    <string name="error_type_no_workspace_selected">Please select a workspace before trying to use this feature!</string>
+    <string name="error_type_member_fetch">Failed to fetch the team members of your workspace!</string>
+    <string name="error_type_no_organization_selected">Please select a organization before trying to use this feature!</string>
+    <string name="error_type_clients_fetch">Failed to fetch the clients of your organization!</string>
 
     <!-- Login -->
     <string name="hint_email">Email</string>
@@ -30,6 +35,11 @@
     <string name="title_overview_tasks">Tasks</string>
     <string name="title_overview_work_time">Work Time</string>
 
+    <!-- Manage -->
+    <string name="title_manage_projects">Projects</string>
+    <string name="title_manage_team">Team</string>
+    <string name="title_manage_clients">Clients</string>
+
     <!-- Timer -->
     <string name="title_project_timer">Projekte</string>
     <string name="title_work_time_timer">Worktime</string>
@@ -37,4 +47,20 @@
     <string name="title_timer_notification">Timer is running</string>
     <string name="title_timer_button_start">Start</string>
     <string name="title_timer_button_stop">Stop</string>
+
+    <!-- Profile -->
+    <string name="profile_entry_username">Username</string>
+    <string name="profile_entry_email">Email</string>
+    <string name="profile_entry_password">Password</string>
+    <string name="profile_entry_two_factor_auth">Two-factor authentication</string>
+    <string name="profile_entry_workspace">Workspace</string>
+
+    <string name="profile_section_account_information">Account Information</string>
+    <string name="profile_section_workspace">Workspace</string>
+    <string name="profile_section_two_factor_auth">Two-Factor Authentication</string>
+
+    <!-- Roles -->
+    <string name="role_admin_display_name">Admin</string>
+    <string name="role_member_display_name">Member</string>
+
 </resources>

@@ -7,8 +7,12 @@
         android:title="@string/title_overview" />
 
     <item
-        android:id="@+id/navigation_settings"
+        android:id="@+id/navigation_manage"
         android:icon="@drawable/icn_settings"
-        android:title="@string/title_settings" />
+        android:title="@string/title_manage" />
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/icn_profile"
+        android:title="@string/title_profile" />
 
 </menu>
