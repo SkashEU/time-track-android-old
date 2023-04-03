@@ -67,6 +67,11 @@ class ProjectTimerService : Service() {
     }
 
     private fun startTimer() {
+        if (isTimerRunning) {
+            Log.d(javaClass.name, "Timer already running...")
+            return
+        }
+
         isTimerRunning = true
         postStatus()
 

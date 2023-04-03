@@ -1,6 +1,7 @@
 package com.skash.timetrack.feature.timer.task
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skash.timetrack.core.helper.date.minusSeconds
 import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
@@ -26,17 +27,17 @@ class TaskTimerViewModel @Inject constructor(
 
     private val timerStatusSubject = BehaviorSubject.create<TimerStatus>()
     private val timerStatusStream = timerStatusSubject.hide()
-    private val _timerStatusLiveData = SingleLiveEvent<TimerStatus>()
+    private val _timerStatusLiveData = MutableLiveData<TimerStatus>()
     val timerStatusLiveData: LiveData<TimerStatus> get() = _timerStatusLiveData
 
     private val timerActionSubject = PublishSubject.create<Boolean>()
     private val timerActionStream = timerActionSubject.hide()
-    private val _timerActionLiveData = SingleLiveEvent<Boolean>()
+    private val _timerActionLiveData = MutableLiveData<Boolean>()
     val timerActionLiveData: LiveData<Boolean> get() = _timerActionLiveData
 
     private val projectTimeCreationStateSubject = PublishSubject.create<State<Unit>>()
     private val projectTimeCreationStateStream = projectTimeCreationStateSubject.hide()
-    private val _projectTimeCreationStateLiveData = SingleLiveEvent<State<Unit>>()
+    private val _projectTimeCreationStateLiveData = MutableLiveData<State<Unit>>()
     val projectTimeCreationStateLiveData: LiveData<State<Unit>> get() = _projectTimeCreationStateLiveData
 
     private val projectSubject = BehaviorSubject.create<Project>()
@@ -82,10 +83,5 @@ class TaskTimerViewModel @Inject constructor(
                 projectTimeCreationStateSubject.onNext(creationState)
             }
             .addTo(subscriptions)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        subscriptions.clear()
     }
 }

@@ -4,17 +4,16 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
-import com.skash.timetrack.core.helper.context.getProjectTimerStatus
-import com.skash.timetrack.core.helper.context.moveProjectTimerToBackground
-import com.skash.timetrack.core.helper.context.moveProjectTimerToForeground
-import com.skash.timetrack.core.helper.context.startProjectTimer
-import com.skash.timetrack.core.helper.context.stopProjectTimer
+import com.skash.timetrack.core.helper.context.getTaskTimerStatus
+import com.skash.timetrack.core.helper.context.moveTaskTimerToBackground
+import com.skash.timetrack.core.helper.context.moveTaskTimerToForeground
+import com.skash.timetrack.core.helper.context.startTaskTimer
+import com.skash.timetrack.core.helper.context.stopTaskTimer
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.TimerStatus
@@ -45,6 +44,7 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
 
     private val elapsedTimeBroadcastReceiver = ElapsedTimeBroadcastReceiver(
         onTimeElapsed = {
+            Log.d(javaClass.name, "Got new Time: $it")
             viewModel.updateTimerStatus(TimerStatus(true, it))
         }
     )
@@ -68,11 +68,11 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
 
         viewModel.timerActionLiveData.observe(viewLifecycleOwner) { shouldStartTimer ->
             if (shouldStartTimer) {
-                requireContext().startProjectTimer()
+                requireContext().startTaskTimer()
                 return@observe
             }
 
-            requireContext().stopProjectTimer()
+            requireContext().stopTaskTimer()
         }
 
         viewModel.timerStatusLiveData.observe(viewLifecycleOwner) { status ->
@@ -111,10 +111,10 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
 
     override fun onResume() {
         super.onResume()
-        requireContext().getProjectTimerStatus()
-
         registerBroadcastReceiver()
-        requireContext().moveProjectTimerToBackground()
+
+        requireContext().getTaskTimerStatus()
+        requireContext().moveTaskTimerToBackground()
     }
 
     override fun onPause() {
@@ -128,7 +128,7 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
             requireContext()
         ).unregisterReceiver(elapsedTimeBroadcastReceiver)
 
-        requireContext().moveProjectTimerToForeground()
+        requireContext().moveTaskTimerToForeground()
     }
 
     private fun registerBroadcastReceiver() {

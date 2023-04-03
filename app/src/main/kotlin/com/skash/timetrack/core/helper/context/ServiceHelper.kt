@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.skash.timetrack.feature.service.ProjectTimerService
 
-fun Context.getProjectTimerStatus() {
+fun Context.getTaskTimerStatus() {
     val projectService = Intent(
         this,
         ProjectTimerService::class.java
@@ -17,7 +17,7 @@ fun Context.getProjectTimerStatus() {
     startService(projectService)
 }
 
-fun Context.startProjectTimer() {
+fun Context.startTaskTimer() {
     val projectService = Intent(
         this,
         ProjectTimerService::class.java
@@ -30,7 +30,7 @@ fun Context.startProjectTimer() {
     startService(projectService)
 }
 
-fun Context.stopProjectTimer() {
+fun Context.stopTaskTimer() {
     val projectService = Intent(
         this,
         ProjectTimerService::class.java
@@ -43,7 +43,7 @@ fun Context.stopProjectTimer() {
     startService(projectService)
 }
 
-fun Context.moveProjectTimerToForeground() {
+fun Context.moveTaskTimerToForeground() {
     val projectService = Intent(this, ProjectTimerService::class.java)
     projectService.putExtra(
         ProjectTimerService.TIMER_ACTION,
@@ -52,7 +52,7 @@ fun Context.moveProjectTimerToForeground() {
     startService(projectService)
 }
 
-fun Context.moveProjectTimerToBackground() {
+fun Context.moveTaskTimerToBackground() {
     val projectService = Intent(
         this,
         ProjectTimerService::class.java
