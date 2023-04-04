@@ -9,8 +9,6 @@ jobs:
       - uses: joschi/setup-jdk@v2
         with:
           java-version: '17'
-          architecture: 'x64
-
       - name: Upload app to AppSweep with Gradle
         env:
           APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_API_KEY }}
