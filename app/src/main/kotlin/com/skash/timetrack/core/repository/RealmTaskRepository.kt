@@ -9,6 +9,7 @@ import io.realm.Realm
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 
 
@@ -32,10 +33,17 @@ class RealmTaskRepository @Inject constructor(
     override fun fetchTasks(): Observable<List<Task>> {
         return Observable.just(
             listOf(
-                Task(1, Project(1, "Test Project", "#f1c453"), "Test Time", Date(), Date(), 10),
+                Task(
+                    1,
+                    Project(1, "Test Project", "#f1c453", UUID.randomUUID()),
+                    "Test Time",
+                    Date(),
+                    Date(),
+                    10
+                ),
                 Task(
                     2,
-                    Project(1, "Test Project", "#f1c453"),
+                    Project(1, "Test Project", "#f1c453", UUID.randomUUID()),
                     "Test Time",
                     testDate(),
                     Date(),

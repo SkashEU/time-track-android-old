@@ -5,4 +5,9 @@ import java.util.UUID
 data class Client(
     val id: UUID,
     val title: String
-)
+) {
+
+    override fun toString(): String {
+        return title
+    }
+}

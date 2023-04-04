@@ -1,16 +1,22 @@
 package com.skash.timetrack.feature.manage.project.manage
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import com.skash.timetrack.TimeTrack
 import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
+import com.skash.timetrack.core.helper.sharedprefs.getSelectedOrganizationUUID
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
+import com.skash.timetrack.core.model.Client
 import com.skash.timetrack.core.model.Project
 import com.skash.timetrack.core.model.ProjectColor
 import com.skash.timetrack.core.model.ProjectModifyWrapper
+import com.skash.timetrack.core.repository.ClientRepository
 import com.skash.timetrack.core.repository.ProjectColorRepository
 import com.skash.timetrack.core.repository.ProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +32,10 @@ import javax.inject.Inject
 class ManageProjectViewModel @Inject constructor(
     private val projectColorRepository: ProjectColorRepository,
     private val projectRepository: ProjectRepository,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
+    private val clientRepository: ClientRepository,
+    savedStateHandle: SavedStateHandle,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val project = savedStateHandle.get<Project>("project")
 
@@ -46,6 +54,18 @@ class ManageProjectViewModel @Inject constructor(
     private val _projectStateLiveData = SingleLiveEvent<State<ProjectModifyWrapper>>()
     val projectStateLiveData: LiveData<State<ProjectModifyWrapper>> get() = _projectStateLiveData
 
+    private val clientStateSubject = BehaviorSubject.create<State<List<Client>>>()
+    private val clientStateStream = clientStateSubject.hide()
+    private val _clientStateLiveData = MutableLiveData<State<List<Client>>>()
+    val clientStateLiveData: LiveData<State<List<Client>>> get() = _clientStateLiveData
+
+    private val clientPreselectSubject = BehaviorSubject.create<Client>()
+    private val clientPreselectStream = clientPreselectSubject.hide()
+    private val _clientPreselectLiveData = SingleLiveEvent<Client>()
+    val clientPreselectLiveData: LiveData<Client> get() = _clientPreselectLiveData
+
+    private val clientSubject = BehaviorSubject.create<Client>()
+
     private val selectedColorSubject = BehaviorSubject.create<ProjectColor>()
 
     private val subscriptions = CompositeDisposable()
@@ -63,12 +83,21 @@ class ManageProjectViewModel @Inject constructor(
             .subscribe(_projectStateLiveData::postValue)
             .addTo(subscriptions)
 
+        clientStateStream
+            .subscribe(_clientStateLiveData::postValue)
+            .addTo(subscriptions)
+
+        clientPreselectStream
+            .subscribe(_clientPreselectLiveData::postValue)
+            .addTo(subscriptions)
+
         // Project Model used to edit existing Project
         project?.let {
             projectSubject.onNext(it)
         }
 
         fetchColors()
+        fetchClients()
     }
 
     fun createOrUpdateProject(title: String) {
@@ -76,6 +105,8 @@ class ManageProjectViewModel @Inject constructor(
             projectStateSubject.onNext(State.Error(ErrorType.NoProjectColorSelected))
             return
         }
+
+        val client = clientSubject.value
 
         if (title.isEmpty()) {
             projectStateSubject.onNext(State.Error(ErrorType.NoProjectTitleSelected))
@@ -85,11 +116,11 @@ class ManageProjectViewModel @Inject constructor(
         project.let { existingProject ->
 
             if (existingProject == null) {
-                createProject(title, selectedColor)
-            } else if (existingProject.title == title && existingProject.color == selectedColor) {
+                createProject(title, selectedColor, client)
+            } else if (existingProject.title == title && existingProject.color == selectedColor && existingProject.clientId == client?.id) {
                 Observable.just(ProjectModifyWrapper(existingProject, false))
             } else {
-                updateProject(existingProject.id, title, selectedColor)
+                updateProject(existingProject.id, title, selectedColor, client)
             }.toState {
                 ErrorType.ProjectModify
             }.subscribe { state ->
@@ -131,9 +162,10 @@ class ManageProjectViewModel @Inject constructor(
 
     private fun createProject(
         title: String,
-        color: String
+        color: String,
+        client: Client?
     ): Observable<ProjectModifyWrapper> {
-        val project = Project(title = title, color = color)
+        val project = Project(title = title, color = color, clientId = client?.id)
         return projectRepository.createProject(project)
             .map {
                 ProjectModifyWrapper(project, true)
@@ -143,13 +175,37 @@ class ManageProjectViewModel @Inject constructor(
     private fun updateProject(
         id: Int,
         title: String,
-        color: String
+        color: String,
+        client: Client?
     ): Observable<ProjectModifyWrapper> {
-        val project = Project(id, title, color)
+        val project = Project(id, title, color, client?.id)
         return projectRepository.updateProject(project)
             .map {
                 ProjectModifyWrapper(project, false)
             }
+    }
+
+    private fun fetchClients() {
+        val orgId = getApplication<TimeTrack>().getSelectedOrganizationUUID() ?: return
+        clientRepository.fetchClientsForOrganization(orgId)
+            .doOnNext {
+                it.find { client ->
+                    client.id == project?.clientId
+                }?.let { client ->
+                    clientPreselectSubject.onNext(client)
+                }
+            }
+            .toState {
+                ErrorType.ClientsFetch
+            }
+            .subscribe {
+                clientStateSubject.onNext(it)
+            }
+            .addTo(subscriptions)
+    }
+
+    fun setClient(client: Client) {
+        clientSubject.onNext(client)
     }
 
     override fun onCleared() {

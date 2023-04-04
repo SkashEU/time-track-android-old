@@ -52,6 +52,26 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/client_input_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:hint="Client"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_input_layout">
+
+        <AutoCompleteTextView
+            android:id="@+id/client_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/color_headline_text_view"
         android:layout_width="0dp"
@@ -60,7 +80,7 @@
         android:text="Select Color"
         app:layout_constraintEnd_toEndOf="@id/title_input_layout"
         app:layout_constraintStart_toStartOf="@id/title_input_layout"
-        app:layout_constraintTop_toBottomOf="@id/title_input_layout" />
+        app:layout_constraintTop_toBottomOf="@id/client_input_layout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -11,11 +13,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding4.view.clicks
+import com.jakewharton.rxbinding4.widget.itemClickEvents
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.helper.state.loading.LoadingDialog
-import com.skash.timetrack.core.model.Project
+import com.skash.timetrack.core.model.Client
 import com.skash.timetrack.core.model.ProjectModifyWrapper
 import com.skash.timetrack.databinding.FragmentManageProjectBinding
 import com.skash.timetrack.feature.adapter.ProjectColorListAdapter
@@ -40,6 +43,14 @@ class ManageProjectFragment : BottomSheetDialogFragment(
         DefaultLoadingDialog(requireContext())
     }
 
+    private val dropdownAdapter by lazy {
+        ArrayAdapter(
+            requireContext(),
+            R.layout.list_item_dropdown,
+            mutableListOf<Client>()
+        )
+    }
+
     private val subscriptions = CompositeDisposable()
 
     companion object {
@@ -53,6 +64,7 @@ class ManageProjectFragment : BottomSheetDialogFragment(
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 5)
         binding.recyclerView.adapter = adapter
+        (binding.clientInputLayout.editText as? AutoCompleteTextView)?.setAdapter(dropdownAdapter)
 
         bindActions()
 
@@ -76,6 +88,16 @@ class ManageProjectFragment : BottomSheetDialogFragment(
             }
             false
         }
+
+        viewModel.clientStateLiveData.observe(viewLifecycleOwner) { state ->
+            state.handle(requireContext(), loadingDialog, onSuccess = { clients ->
+                dropdownAdapter.addAll(clients)
+            })
+        }
+
+        viewModel.clientPreselectLiveData.observe(viewLifecycleOwner) {
+            binding.clientMenu.setText(it.title)
+        }
     }
 
     private fun bindActions() {
@@ -84,12 +106,24 @@ class ManageProjectFragment : BottomSheetDialogFragment(
                 viewModel.createOrUpdateProject(
                     binding.titleEditText.text.toString()
                 )
-            }.addTo(subscriptions)
+            }
+            .addTo(subscriptions)
 
         binding.closeButton.clicks()
             .subscribe {
                 dismiss()
-            }.addTo(subscriptions)
+            }
+            .addTo(subscriptions)
+
+        binding.clientMenu.itemClickEvents()
+            .map {
+                it.position
+            }
+            .subscribe {
+                val client = dropdownAdapter.getItem(it) ?: return@subscribe
+                viewModel.setClient(client)
+            }
+            .addTo(subscriptions)
     }
 
     private fun notifyCallerAboutProjectChange(project: ProjectModifyWrapper) {
