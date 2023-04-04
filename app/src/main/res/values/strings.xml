@@ -20,6 +20,12 @@
     <string name="error_type_member_fetch">Failed to fetch the team members of your workspace!</string>
     <string name="error_type_no_organization_selected">Please select a organization before trying to use this feature!</string>
     <string name="error_type_clients_fetch">Failed to fetch the clients of your organization!</string>
+    <string name="error_type_workspace_fetch">Failed to fetch the workspaces of your organization!</string>
+    <string name="error_type_organizations_fetch">Failed to fetch your organizations!</string>
+    <string name="error_type_username_change">Failed to change your username!</string>
+    <string name="error_type_username_empty">Username cant be empty!</string>
+    <string name="error_type_backup_codes_fetch">Failed to fetch backup codes</string>
+
 
     <!-- Login -->
     <string name="hint_email">Email</string>
@@ -54,6 +60,7 @@
     <string name="profile_entry_password">Password</string>
     <string name="profile_entry_two_factor_auth">Two-factor authentication</string>
     <string name="profile_entry_workspace">Workspace</string>
+    <string name="profile_entry_backup_codes">View Backup Codes</string>
 
     <string name="profile_section_account_information">Account Information</string>
     <string name="profile_section_workspace">Workspace</string>

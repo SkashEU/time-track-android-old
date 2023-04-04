@@ -3,10 +3,14 @@ package com.skash.timetrack.core.di
 import android.content.Context
 import com.skash.timetrack.core.repository.ApiAuthRepository
 import com.skash.timetrack.core.repository.ApiClientRepository
+import com.skash.timetrack.core.repository.ApiOrganizationRepository
 import com.skash.timetrack.core.repository.ApiProjectRepository
 import com.skash.timetrack.core.repository.ApiTeamRepository
+import com.skash.timetrack.core.repository.ApiUserDataRepository
+import com.skash.timetrack.core.repository.ApiWorkspaceRepository
 import com.skash.timetrack.core.repository.AuthRepository
 import com.skash.timetrack.core.repository.ClientRepository
+import com.skash.timetrack.core.repository.OrganizationRepository
 import com.skash.timetrack.core.repository.ProfileSectionRepository
 import com.skash.timetrack.core.repository.ProjectColorRepository
 import com.skash.timetrack.core.repository.ProjectRepository
@@ -16,7 +20,9 @@ import com.skash.timetrack.core.repository.RealmWorkTimeRepository
 import com.skash.timetrack.core.repository.SharedPrefsProfileSectionRepository
 import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.TeamRepository
+import com.skash.timetrack.core.repository.UserDataRepository
 import com.skash.timetrack.core.repository.WorkTimeRepository
+import com.skash.timetrack.core.repository.WorkspaceRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -85,6 +91,24 @@ object AppModule {
     @Singleton
     fun provideClientRepository(): ClientRepository {
         return ApiClientRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkspaceRepository(): WorkspaceRepository {
+        return ApiWorkspaceRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrganizationRepository(): OrganizationRepository {
+        return ApiOrganizationRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDataRepository(): UserDataRepository {
+        return ApiUserDataRepository()
     }
 
     @Provides

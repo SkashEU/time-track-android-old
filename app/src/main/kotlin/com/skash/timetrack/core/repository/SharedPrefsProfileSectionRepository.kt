@@ -44,6 +44,10 @@ class SharedPrefsProfileSectionRepository @Inject constructor(
                 ProfileSection.TwoFactorAuthentication(
                     listOf(
                         ProfileSectionEntry(
+                            ProfileSectionEntryType.BACKUP_CODES,
+                            ""
+                        ),
+                        ProfileSectionEntry(
                             ProfileSectionEntryType.TWO_FACTOR_AUTH,
                             ""
                         )

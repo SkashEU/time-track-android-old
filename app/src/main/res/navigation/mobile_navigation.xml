@@ -15,7 +15,7 @@
         android:id="@+id/navigation_manage"
         android:name="com.skash.timetrack.feature.manage.ManageFragment"
         android:label="Manage"
-        tools:layout="@layout/fragment_manage" >
+        tools:layout="@layout/fragment_manage">
         <action
             android:id="@+id/navigate_to_manage_project"
             app:destination="@id/navigation_manage_projects" />
@@ -42,12 +42,36 @@
         android:id="@+id/navigation_profile"
         android:name="com.skash.timetrack.feature.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/navigate_to_workspace_selection"
+            app:destination="@id/navigation_workspace_selection" />
+        <action
+            android:id="@+id/navigate_to_name_change"
+            app:destination="@id/navigation_name_change" />
+        <action
+            android:id="@+id/navigate_to_backup_codes"
+            app:destination="@id/navigation_backup_codes" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_team"
         android:name="com.skash.timetrack.feature.manage.team.TeamFragment"
         android:label="Team"
         tools:layout="@layout/fragment_team" />
+
+    <dialog
+        android:id="@+id/navigation_workspace_selection"
+        android:name="com.skash.timetrack.feature.workspace.WorkspaceSelectionBottomSheet"
+        android:label="WorkspaceSelectionBottomSheet" />
+    <dialog
+        android:id="@+id/navigation_name_change"
+        android:name="com.skash.timetrack.feature.profile.username.NameChangeFragment"
+        android:label="NameChangeFragment" />
+
+    <dialog
+        android:id="@+id/navigation_backup_codes"
+        android:name="com.skash.timetrack.feature.auth.backupcodes.BackupCodesFragment"
+        android:label="BackupCodesFragment" />
 
 </navigation>

@@ -23,6 +23,9 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object WorkspaceMemberFetch : ErrorType(R.string.error_type_member_fetch)
     object NoOrganizationSelected : ErrorType(R.string.error_type_no_organization_selected)
     object ClientsFetch : ErrorType(R.string.error_type_clients_fetch)
-
+    object WorkspaceFetch : ErrorType(R.string.error_type_workspace_fetch)
+    object OrganizationFetch : ErrorType(R.string.error_type_organizations_fetch)
+    object UsernameChange : ErrorType(R.string.error_type_username_change)
+    object UsernameEmpty : ErrorType(R.string.error_type_username_empty)
+    object BackupCodesFetch: ErrorType(R.string.error_type_backup_codes_fetch)
 }
-

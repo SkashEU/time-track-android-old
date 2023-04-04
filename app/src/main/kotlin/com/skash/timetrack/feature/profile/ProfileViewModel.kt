@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.menu.ProfileSection
+import com.skash.timetrack.core.menu.ProfileSectionEntryType
 import com.skash.timetrack.core.repository.ProfileSectionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -23,6 +25,11 @@ class ProfileViewModel @Inject constructor(
     private val _profileSectionLiveData = MutableLiveData<List<ProfileSection>>()
     val profileSectionLiveData: LiveData<List<ProfileSection>> get() = _profileSectionLiveData
 
+    private val profileSelectionSubject = BehaviorSubject.create<ProfileSectionEntryType>()
+    private val profileSelectionStream = profileSelectionSubject.hide()
+    private val _profileSelectionLiveData = SingleLiveEvent<ProfileSectionEntryType>()
+    val profileSelectionLiveData: LiveData<ProfileSectionEntryType> get() = _profileSelectionLiveData
+
     private val subscriptions = CompositeDisposable()
 
     init {
@@ -30,10 +37,18 @@ class ProfileViewModel @Inject constructor(
             .subscribe(_profileSectionLiveData::postValue)
             .addTo(subscriptions)
 
+        profileSelectionStream
+            .subscribe(_profileSelectionLiveData::postValue)
+            .addTo(subscriptions)
+
         fetchProfileSections()
     }
 
-    private fun fetchProfileSections() {
+    fun onProfileSectionClicked(entry: ProfileSectionEntryType) {
+        profileSelectionSubject.onNext(entry)
+    }
+
+    fun fetchProfileSections() {
         profileSectionRepository
             .fetchProfileSections()
             .subscribeBy(
@@ -45,7 +60,6 @@ class ProfileViewModel @Inject constructor(
                 }
             ).addTo(subscriptions)
     }
-
 
     override fun onCleared() {
         super.onCleared()

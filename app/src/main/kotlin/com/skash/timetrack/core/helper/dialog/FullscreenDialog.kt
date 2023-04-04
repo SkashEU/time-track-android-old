@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.dialog
+package com.skash.timetrack.core.helper.dialog
 
 import android.app.Dialog
 import android.os.Bundle

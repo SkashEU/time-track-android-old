@@ -2,6 +2,7 @@ package com.skash.timetrack.core.helper.sharedprefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.skash.timetrack.core.model.Organization
 import com.skash.timetrack.core.model.Workspace
 import java.util.UUID
 
@@ -53,4 +54,23 @@ fun Context.getSelectedOrganizationUUID(): UUID? {
 
 fun Context.getUserEmail(): String = getPrefs().getString(USER_EMAIL, "") ?: ""
 fun Context.getUserName(): String = getPrefs().getString(USER_NAME, "") ?: ""
+
+fun Context.saveSelectedWorkspace(workspace: Workspace) {
+    getPrefs().edit()
+        .putString(SELECTED_WORKSPACE_TITLE, workspace.title)
+        .putString(SELECTED_WORKSPACE_ID, workspace.id.toString())
+        .apply()
+}
+
+fun Context.saveSelectedOrganization(org: Organization) {
+    getPrefs().edit()
+        .putString(SELECTED_ORGANIZATION_ID, org.id.toString())
+        .apply()
+}
+
+fun Context.saveUsername(name: String) {
+    getPrefs().edit()
+        .putString(USER_NAME, name)
+        .apply()
+}
 
