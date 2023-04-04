@@ -6,6 +6,7 @@ plugins {
     id("androidx.baselineprofile")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
+    id("com.guardsquare.appsweep")
 }
 
 apply(plugin = "realm-android")
