@@ -6,8 +6,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - uses: joschi/setup-jdk@v2
+      - uses: actions/setup-java@v2
         with:
+          distribution: 'zulu'
           java-version: '17'
       - name: Upload app to AppSweep with Gradle
         env:
