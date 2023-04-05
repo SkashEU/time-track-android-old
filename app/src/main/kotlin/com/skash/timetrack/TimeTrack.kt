@@ -4,7 +4,8 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import com.skash.timetrack.core.cache.seeder.ProjectColorSeeder
-import com.skash.timetrack.feature.service.ProjectTimerService
+import com.skash.timetrack.feature.service.TaskTimerService
+import com.skash.timetrack.feature.service.WorkTimeTimerService
 import dagger.hilt.android.HiltAndroidApp
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -17,6 +18,7 @@ class TimeTrack : Application() {
 
         setupRealm()
         createProjectTimeNotificationChannel()
+        createWorkTimeTimeNotificationChannel()
     }
 
     private fun setupRealm() {
@@ -33,8 +35,21 @@ class TimeTrack : Application() {
 
     private fun createProjectTimeNotificationChannel() {
         val notificationChannel = NotificationChannel(
-            ProjectTimerService.CHANNEL_ID,
+            TaskTimerService.CHANNEL_ID,
             getString(R.string.title_project_time_channel),
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            setShowBadge(true)
+        }
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(notificationChannel)
+    }
+
+    private fun createWorkTimeTimeNotificationChannel() {
+        val notificationChannel = NotificationChannel(
+            WorkTimeTimerService.CHANNEL_ID,
+            getString(R.string.title_work_time_channel),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
             setShowBadge(true)

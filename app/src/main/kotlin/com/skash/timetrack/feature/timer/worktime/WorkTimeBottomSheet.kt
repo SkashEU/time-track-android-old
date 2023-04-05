@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.timer.task
+package com.skash.timetrack.feature.timer.worktime
 
 import android.content.IntentFilter
 import android.os.Bundle
@@ -9,19 +9,19 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
-import com.skash.timetrack.core.helper.context.getTaskTimerStatus
-import com.skash.timetrack.core.helper.context.moveTaskTimerToBackground
-import com.skash.timetrack.core.helper.context.moveTaskTimerToForeground
-import com.skash.timetrack.core.helper.context.startTaskTimer
-import com.skash.timetrack.core.helper.context.stopTaskTimer
+import com.skash.timetrack.core.helper.context.getWorkTimerStatus
+import com.skash.timetrack.core.helper.context.moveWorkTimeTimerToBackground
+import com.skash.timetrack.core.helper.context.moveWorkTimeTimerToForeground
+import com.skash.timetrack.core.helper.context.startWorkTimeTimer
+import com.skash.timetrack.core.helper.context.stopWorkTimeTimer
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.TimerStatus
-import com.skash.timetrack.databinding.FragmentProjectTimeBinding
+import com.skash.timetrack.databinding.FragmentWorktimeBinding
 import com.skash.timetrack.feature.broadcast.ElapsedTimeBroadcastReceiver
 import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
-import com.skash.timetrack.feature.service.TaskTimerService
 import com.skash.timetrack.feature.service.TimerService
+import com.skash.timetrack.feature.service.WorkTimeTimerService
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -30,12 +30,12 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project_time) {
+class WorkTimeBottomSheet : BottomSheetDialogFragment(R.layout.fragment_worktime) {
 
-    private var _binding: FragmentProjectTimeBinding? = null
+    private var _binding: FragmentWorktimeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TaskTimerViewModel by viewModels()
+    private val viewModel: WorkTimeViewModel by viewModels()
 
     private val timerStatusBroadcastReceiver = TimerStatusBroadcastReceiver(
         onStateChanged = {
@@ -62,18 +62,18 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentProjectTimeBinding.bind(view)
+        _binding = FragmentWorktimeBinding.bind(view)
 
         bindActions()
         setupView()
 
         viewModel.timerActionLiveData.observe(viewLifecycleOwner) { shouldStartTimer ->
             if (shouldStartTimer) {
-                requireContext().startTaskTimer()
+                requireContext().startWorkTimeTimer()
                 return@observe
             }
 
-            requireContext().stopTaskTimer()
+            requireContext().stopWorkTimeTimer()
         }
 
         viewModel.timerStatusLiveData.observe(viewLifecycleOwner) { status ->
@@ -88,13 +88,12 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
                 return@observe
             }
 
-            viewModel.createProjectTime(
-                binding.descriptionEditText.text.toString(),
+            viewModel.createWorkTime(
                 status.elapsedTime
             )
         }
 
-        viewModel.taskTimeCreationStateLiveData.observe(viewLifecycleOwner) { creationState ->
+        viewModel.workTimeCreationStateLiveData.observe(viewLifecycleOwner) { creationState ->
             creationState.handle(requireContext(), loadingDialog, onSuccess = {
                 Log.d(javaClass.name, "Saved Project Time")
                 updateTimer(0)
@@ -114,8 +113,8 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
         super.onResume()
         registerBroadcastReceiver()
 
-        requireContext().getTaskTimerStatus()
-        requireContext().moveTaskTimerToBackground()
+        requireContext().getWorkTimerStatus()
+        requireContext().moveWorkTimeTimerToBackground()
     }
 
     override fun onPause() {
@@ -129,19 +128,19 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
             requireContext()
         ).unregisterReceiver(elapsedTimeBroadcastReceiver)
 
-        requireContext().moveTaskTimerToForeground()
+        requireContext().moveWorkTimeTimerToForeground()
     }
 
     private fun registerBroadcastReceiver() {
         val statusFilter = IntentFilter()
-        statusFilter.addAction(TaskTimerService.TIMER_STATUS)
+        statusFilter.addAction(WorkTimeTimerService.TIMER_STATUS)
 
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(timerStatusBroadcastReceiver, statusFilter)
 
         // Receiving time values from service
         val timeFilter = IntentFilter()
-        timeFilter.addAction(TaskTimerService.TIMER_TICK)
+        timeFilter.addAction(WorkTimeTimerService.TIMER_TICK)
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(elapsedTimeBroadcastReceiver, timeFilter)
     }

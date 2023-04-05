@@ -6,20 +6,14 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.skash.timetrack.R
 import com.skash.timetrack.core.exception.MissingTimerActionException
 import java.util.Timer
 import java.util.TimerTask
 
-class ProjectTimerService : Service() {
+abstract class TimerService : Service() {
 
     companion object {
-        // Channel ID for notifications
-        const val CHANNEL_ID = "project_time_service_channel"
-        const val NOTIFICATION_ID = 999
-
         // Service Actions
         const val START = "START"
         const val STOP = "STOP"
@@ -46,11 +40,17 @@ class ProjectTimerService : Service() {
         }
     }
 
-    private var timeElapsed: Int = 0
-    private var isTimerRunning = false
+    protected var timeElapsed: Int = 0
+    protected var isTimerRunning = false
 
-    private var foregroundNotificationUpdateTimer = Timer()
-    private var stopwatchTimer = Timer()
+    protected var foregroundNotificationUpdateTimer = Timer()
+    protected var stopwatchTimer = Timer()
+
+    abstract fun getChannelID(): String
+    abstract fun getNotificationID(): Int
+    abstract fun getStatusAction(): String
+    abstract fun getTickAction(): String
+    abstract fun createNotification(): Notification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -76,7 +76,6 @@ class ProjectTimerService : Service() {
         postStatus()
 
         stopwatchTimer = Timer()
-
         cyclicallyBroadcastElapsedTime()
     }
 
@@ -95,7 +94,7 @@ class ProjectTimerService : Service() {
             return
         }
 
-        startForeground(NOTIFICATION_ID, createNotification())
+        startForeground(getNotificationID(), createNotification())
         foregroundNotificationUpdateTimer = Timer()
         cyclicallyPostForegroundNotification()
     }
@@ -111,7 +110,7 @@ class ProjectTimerService : Service() {
 
     private fun postStatus(isFinished: Boolean = false) {
         val statusIntent = Intent().apply {
-            action = TIMER_STATUS
+            action = getStatusAction()
             putExtra(IS_TIMER_RUNNING, isTimerRunning)
             putExtra(TIME_ELAPSED, timeElapsed)
             putExtra(IS_TIMER_FINISHED, isFinished)
@@ -127,12 +126,12 @@ class ProjectTimerService : Service() {
             override fun run() {
                 timeElapsed++
                 val timerIntent = Intent().apply {
-                    action = TIMER_TICK
+                    action = getTickAction()
                     putExtra(TIME_ELAPSED, timeElapsed)
                 }
 
                 LocalBroadcastManager.getInstance(
-                    this@ProjectTimerService
+                    this@TimerService
                 ).sendBroadcast(timerIntent)
             }
 
@@ -151,24 +150,12 @@ class ProjectTimerService : Service() {
 
     private fun postNotification() {
         getSystemService(NotificationManager::class.java).notify(
-            NOTIFICATION_ID,
+            getNotificationID(),
             createNotification()
         )
     }
 
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(R.string.title_timer_notification))
-            .setOnlyAlertOnce(true)
-            .setAutoCancel(true)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.icn_timer)
-            .setContentText(formatElapsedTime())
-            .build()
-
-    }
-
-    private fun formatElapsedTime(): String {
+    protected fun formatElapsedTime(): String {
         val hours = timeElapsed / 60 / 60
         val minutes = timeElapsed / 60
         val seconds = timeElapsed % 60

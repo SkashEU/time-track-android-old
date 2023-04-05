@@ -32,7 +32,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.skash.timetrack.feature.service.ProjectTimerService" />
+        <service android:name="com.skash.timetrack.feature.service.TaskTimerService" />
+        <service android:name="com.skash.timetrack.feature.service.WorkTimeTimerService" />
     </application>
 
 </manifest>

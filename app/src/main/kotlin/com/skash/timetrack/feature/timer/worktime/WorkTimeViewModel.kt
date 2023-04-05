@@ -1,4 +1,4 @@
-package com.skash.timetrack.feature.timer.task
+package com.skash.timetrack.feature.timer.worktime
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,10 +7,9 @@ import com.skash.timetrack.core.helper.date.minusSeconds
 import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
-import com.skash.timetrack.core.model.Project
-import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TimerStatus
-import com.skash.timetrack.core.repository.TaskRepository
+import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.repository.WorkTimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -20,8 +19,8 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class TaskTimerViewModel @Inject constructor(
-    private val taskRepository: TaskRepository
+class WorkTimeViewModel @Inject constructor(
+    private val workTimeRepository: WorkTimeRepository
 ) : ViewModel() {
 
     private val timerStatusSubject = BehaviorSubject.create<TimerStatus>()
@@ -34,12 +33,10 @@ class TaskTimerViewModel @Inject constructor(
     private val _timerActionLiveData = MutableLiveData<Boolean>()
     val timerActionLiveData: LiveData<Boolean> get() = _timerActionLiveData
 
-    private val taskTimeCreationStateSubject = PublishSubject.create<State<Unit>>()
-    private val taskTimeCreationStateStream = taskTimeCreationStateSubject.hide()
-    private val _taskTimeCreationStateLiveData = MutableLiveData<State<Unit>>()
-    val taskTimeCreationStateLiveData: LiveData<State<Unit>> get() = _taskTimeCreationStateLiveData
-
-    private val projectSubject = BehaviorSubject.create<Project>()
+    private val workTimeCreationStateSubject = PublishSubject.create<State<Unit>>()
+    private val workTimeCreationStateStream = workTimeCreationStateSubject.hide()
+    private val _workTimeCreationStateLiveData = MutableLiveData<State<Unit>>()
+    val workTimeCreationStateLiveData: LiveData<State<Unit>> get() = _workTimeCreationStateLiveData
 
     private val subscriptions = CompositeDisposable()
 
@@ -52,8 +49,8 @@ class TaskTimerViewModel @Inject constructor(
             .subscribe(_timerActionLiveData::postValue)
             .addTo(subscriptions)
 
-        taskTimeCreationStateStream
-            .subscribe(_taskTimeCreationStateLiveData::postValue)
+        workTimeCreationStateStream
+            .subscribe(_workTimeCreationStateLiveData::postValue)
             .addTo(subscriptions)
     }
 
@@ -64,22 +61,19 @@ class TaskTimerViewModel @Inject constructor(
 
     fun updateTimerStatus(status: TimerStatus) = timerStatusSubject.onNext(status)
 
-    fun createProjectTime(description: String, duration: Int) {
-        val project = projectSubject.value
+    fun createWorkTime(duration: Int) {
         val now = Date()
-        val time = Task(
-            project = project,
-            description = description,
+        val time = WorkTime(
             startedAt = now.minusSeconds(duration),
             endedAt = now,
             duration = duration
         )
-        taskRepository.createTask(time)
+        workTimeRepository.createWorkTime(time)
             .toState {
                 ErrorType.ProjectTimeSave
             }
             .subscribe { creationState ->
-                taskTimeCreationStateSubject.onNext(creationState)
+                workTimeCreationStateSubject.onNext(creationState)
             }
             .addTo(subscriptions)
     }

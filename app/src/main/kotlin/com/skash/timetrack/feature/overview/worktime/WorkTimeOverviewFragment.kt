@@ -9,6 +9,7 @@ import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.databinding.FragmentOverviewWorkTimeBinding
 import com.skash.timetrack.feature.adapter.WorkTimeGroupListAdapter
+import com.skash.timetrack.feature.timer.worktime.WorkTimeBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +22,8 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
 
     private val adapter = WorkTimeGroupListAdapter()
 
+    private val trackingBottomSheet = WorkTimeBottomSheet()
+
     private val loadingDialog by lazy {
         DefaultLoadingDialog(requireContext())
     }
@@ -32,6 +35,10 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.setHasFixedSize(true)
+
+        binding.timeTrackFab.setOnClickListener {
+            trackingBottomSheet.show(childFragmentManager, null)
+        }
 
         viewModel.workTimeGroupsLiveData.observe(viewLifecycleOwner) { state ->
             state.handle(requireContext(), loadingDialog, onSuccess = { groups ->

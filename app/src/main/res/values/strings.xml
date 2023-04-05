@@ -50,7 +50,9 @@
     <string name="title_project_timer">Projekte</string>
     <string name="title_work_time_timer">Worktime</string>
     <string name="title_project_time_channel">Project Time Notifications</string>
-    <string name="title_timer_notification">Timer is running</string>
+    <string name="title_work_time_channel">Work Time Notifications</string>
+    <string name="title_task_timer_notification">Task Timer is running</string>
+    <string name="title_work_time_timer_notification">WorkTime Timer is running</string>
     <string name="title_timer_button_start">Start</string>
     <string name="title_timer_button_stop">Stop</string>
 
