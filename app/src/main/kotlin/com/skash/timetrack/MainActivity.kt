@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -14,6 +15,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.skash.timetrack.core.helper.sharedprefs.getAuthData
+import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        Toast.makeText(this, getPrefs().getAuthData().bearer, Toast.LENGTH_SHORT).show()
         requestPermissions()
     }
 

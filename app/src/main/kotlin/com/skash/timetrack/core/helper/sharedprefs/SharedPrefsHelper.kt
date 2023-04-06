@@ -2,6 +2,9 @@ package com.skash.timetrack.core.helper.sharedprefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.skash.timetrack.core.model.AuthData
 import com.skash.timetrack.core.model.Organization
 import com.skash.timetrack.core.model.Workspace
 import java.util.UUID
@@ -12,27 +15,36 @@ const val SELECTED_WORKSPACE_TITLE = "key_selected_workspace_title"
 const val USER_EMAIL = "key_user_email"
 const val USER_NAME = "key_user_name"
 
+const val SHARED_PREFS_NAME = "secret_shared_prefs"
+
+const val SHARED_PREFS_AUTH_DATA = "auth_data"
+
 fun Context.getPrefs(): SharedPreferences {
-    return getSharedPreferences(packageName, Context.MODE_PRIVATE)
+    val masterKey = MasterKey.Builder(this)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
+
+    return EncryptedSharedPreferences.create(
+        this,
+        SHARED_PREFS_NAME,
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
 }
 
-fun Context.getSelectedWorkspace(): Workspace? {
-    val id: UUID = try {
-        UUID.fromString(getPrefs().getString(SELECTED_WORKSPACE_ID, ""))
-    } catch (e: IllegalArgumentException) {
-        null
-    } ?: return null
-
-    val title = getPrefs().getString(SELECTED_WORKSPACE_TITLE, "").run {
-        if (this.isNullOrEmpty()) {
-            return null
-        }
-
-        return@run this
-    }
-
-    return Workspace(id, title)
+fun SharedPreferences.saveAuthData(authData: AuthData) {
+    edit()
+        .putString(SHARED_PREFS_AUTH_DATA, authData.bearer)
+        .apply()
 }
+
+fun SharedPreferences.getAuthData(): AuthData {
+    return AuthData(
+        getString(SHARED_PREFS_AUTH_DATA, "") ?: ""
+    )
+}
+
 
 fun Context.getWorkspaceTitle(): String = getPrefs().getString(SELECTED_WORKSPACE_TITLE, "") ?: ""
 

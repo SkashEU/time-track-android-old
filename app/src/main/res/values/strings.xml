@@ -25,6 +25,8 @@
     <string name="error_type_username_change">Failed to change your username!</string>
     <string name="error_type_username_empty">Username cant be empty!</string>
     <string name="error_type_backup_codes_fetch">Failed to fetch backup codes</string>
+    <string name="error_type_two_fa_missing">Retry with 2FA</string>
+
 
 
     <!-- Login -->

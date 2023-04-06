@@ -2,13 +2,20 @@ package com.skash.timetrack.core.helper.state
 
 import androidx.annotation.StringRes
 import com.skash.timetrack.R
+import retrofit2.HttpException
 
 sealed class ErrorType(@StringRes val errorMessage: Int) {
 
     companion object {
-        fun fromThrowable(throwable: Throwable): ErrorType? {
-            //TODO: Try to parse throwable to error tyspe
-            return null
+
+        private const val ERROR_CODE_TWO_FA_MISSING = 449
+
+
+        fun fromThrowable(throwable: HttpException): ErrorType? {
+            return when (throwable.code()) {
+                ERROR_CODE_TWO_FA_MISSING -> TwoFAMissing
+                else -> null
+            }
         }
     }
 
@@ -27,5 +34,6 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object OrganizationFetch : ErrorType(R.string.error_type_organizations_fetch)
     object UsernameChange : ErrorType(R.string.error_type_username_change)
     object UsernameEmpty : ErrorType(R.string.error_type_username_empty)
-    object BackupCodesFetch: ErrorType(R.string.error_type_backup_codes_fetch)
+    object BackupCodesFetch : ErrorType(R.string.error_type_backup_codes_fetch)
+    object TwoFAMissing : ErrorType(R.string.error_type_two_fa_missing)
 }

@@ -3,6 +3,7 @@ package com.skash.timetrack.core.helper.rx
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import io.reactivex.rxjava3.core.Observable
+import retrofit2.HttpException
 
 fun <T : Any> Observable<T>.toState(errorType: (Throwable) -> ErrorType): Observable<State<T>> {
     return Observable.concat(
@@ -10,7 +11,8 @@ fun <T : Any> Observable<T>.toState(errorType: (Throwable) -> ErrorType): Observ
         this.map<State<T>> {
             State.Success(it)
         }.onErrorReturn {
-            State.Error(ErrorType.fromThrowable(it) ?: errorType(it))
+            val httpError = it as? HttpException ?: return@onErrorReturn State.Error(errorType(it))
+            State.Error(ErrorType.fromThrowable(httpError) ?: errorType(it))
         }
     )
 }

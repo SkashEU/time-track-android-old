@@ -12,7 +12,7 @@ class RealmProjectColorRepository @Inject constructor(
 ) : ProjectColorRepository {
     override fun fetchColors(): Observable<List<ProjectColor>> {
 
-        return Observable.create<List<ProjectColor>> { emitter ->
+        return Observable.create { emitter ->
             Realm.getDefaultInstance().use { realm ->
                 val result = realm.copyFromRealm(
                     realm.where(RealmProjectColor::class.java).findAll()

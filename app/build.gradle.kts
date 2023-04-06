@@ -28,10 +28,12 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
+            buildConfigField("String", "BASE_URL", "\"http://192.168.178.156:8080/api\"")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            buildConfigField("String", "BASE_URL", "\"http://192.168.178.156:8080/api\"")
 
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -48,6 +50,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        android.buildFeatures.buildConfig = true
     }
 }
 
@@ -73,7 +76,12 @@ dependencies {
     // Realm
     implementation("io.realm:realm-gradle-plugin:10.13.2-transformer-api")
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    // API
+    implementation("com.skash.timetrack.api:time-track-openapi-client:0.5.3")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    implementation("androidx.security:security-crypto:1.1.0-alpha05")
+    implementation("androidx.core:core-ktx:1.10.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

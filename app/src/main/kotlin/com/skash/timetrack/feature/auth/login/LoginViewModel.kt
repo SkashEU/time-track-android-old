@@ -6,6 +6,7 @@ import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
+import com.skash.timetrack.core.model.AuthData
 import com.skash.timetrack.core.model.User
 import com.skash.timetrack.core.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +20,10 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val authStateSubject = PublishSubject.create<State<User>>()
+    private val authStateSubject = PublishSubject.create<State<AuthData>>()
     private val authStateStream = authStateSubject.hide()
-    private val _authStateLiveData = SingleLiveEvent<State<User>>()
-    val authStateLiveData: LiveData<State<User>> get() = _authStateLiveData
+    private val _authStateLiveData = SingleLiveEvent<State<AuthData>>()
+    val authStateLiveData: LiveData<State<AuthData>> get() = _authStateLiveData
 
     private val subscriptions = CompositeDisposable()
 
@@ -32,8 +33,8 @@ class LoginViewModel @Inject constructor(
             .addTo(subscriptions)
     }
 
-    fun authenticateUser(email: String, password: String) {
-        authRepository.login(email, password)
+    fun authenticateUser(email: String, password: String, twoFACode: Int? = null) {
+        authRepository.login(email, password, twoFACode)
             .toState {
                 ErrorType.UserUnauthenticated
             }

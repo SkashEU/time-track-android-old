@@ -1,6 +1,9 @@
 package com.skash.timetrack.core.di
 
 import android.content.Context
+import com.skash.timetrack.BuildConfig
+import com.skash.timetrack.api.network.ApiClient
+import com.skash.timetrack.api.network.api.AuthApi
 import com.skash.timetrack.core.repository.ApiAuthRepository
 import com.skash.timetrack.core.repository.ApiClientRepository
 import com.skash.timetrack.core.repository.ApiOrganizationRepository
@@ -36,10 +39,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    private val apiClient = ApiClient(BuildConfig.BASE_URL)
+
     @Provides
     @Singleton
-    fun provideAuthRepository(): AuthRepository {
-        return ApiAuthRepository()
+    fun provideAuthRepository(
+        authApi: AuthApi
+    ): AuthRepository {
+        return ApiAuthRepository(authApi)
     }
 
     @Provides
@@ -109,6 +116,12 @@ object AppModule {
     @Singleton
     fun provideUserDataRepository(): UserDataRepository {
         return ApiUserDataRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(): AuthApi {
+        return apiClient.createService(AuthApi::class.java)
     }
 
     @Provides
