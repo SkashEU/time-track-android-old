@@ -7,6 +7,7 @@ plugins {
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
     id("com.guardsquare.appsweep")
+    id("com.google.gms.google-services")
 }
 
 apply(plugin = "realm-android")
@@ -77,9 +78,12 @@ dependencies {
     implementation("io.realm:realm-gradle-plugin:10.13.2-transformer-api")
 
     // API
-    implementation("com.skash.timetrack.api:time-track-openapi-client:0.5.3")
+    implementation("com.skash.timetrack.api:time-track-openapi-client:0.5.4")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
+    // Firebase
+    implementation("com.google.firebase:firebase-messaging-ktx:23.1.2")
+    
     implementation("androidx.security:security-crypto:1.1.0-alpha05")
     implementation("androidx.core:core-ktx:1.10.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
