@@ -7,8 +7,7 @@ import com.skash.timetrack.core.helper.state.ErrorType
 
 fun Context.showErrorAlert(errorType: ErrorType) {
     MaterialAlertDialogBuilder(this)
-        .setTitle(R.string.error_alert_title)
         .setMessage(errorType.errorMessage)
-        .setNeutralButton(R.string.alert_ok_button_title, null)
+        .setPositiveButton(R.string.alert_ok_button_title, null)
         .show()
 }

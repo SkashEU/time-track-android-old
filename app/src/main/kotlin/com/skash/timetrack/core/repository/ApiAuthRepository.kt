@@ -6,6 +6,7 @@ import com.skash.timetrack.api.network.model.Device
 import com.skash.timetrack.core.helper.string.encode
 import com.skash.timetrack.core.model.AuthData
 import com.skash.timetrack.core.model.DeviceInformation
+import com.skash.timetrack.core.model.User
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
@@ -31,6 +32,15 @@ class ApiAuthRepository @Inject constructor(
             }.map {
                 AuthData("Bearer ${it.token ?: ""}")
             }
+    }
+
+    override fun registerUser(name: String, email: String, password: String): Observable<User> {
+        // Create user call
+        return Observable.just(User(1))
+    }
+
+    override fun resetPassword(email: String): Observable<Unit> {
+        return Observable.just(Unit)
     }
 
     private fun fetchPushToken(): Observable<String> {

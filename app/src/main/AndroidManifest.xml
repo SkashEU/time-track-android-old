@@ -33,6 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.skash.timetrack.feature.auth.registration.RegistrationActivity" />
 
         <service android:name="com.skash.timetrack.feature.service.TaskTimerService" />
         <service android:name="com.skash.timetrack.feature.service.WorkTimeTimerService" />

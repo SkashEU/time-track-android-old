@@ -45,6 +45,9 @@ fun SharedPreferences.getAuthData(): AuthData {
     )
 }
 
+fun SharedPreferences.clearAuthData() {
+    edit().remove(SHARED_PREFS_AUTH_DATA).apply()
+}
 
 fun Context.getWorkspaceTitle(): String = getPrefs().getString(SELECTED_WORKSPACE_TITLE, "") ?: ""
 

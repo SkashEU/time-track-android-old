@@ -36,4 +36,6 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object UsernameEmpty : ErrorType(R.string.error_type_username_empty)
     object BackupCodesFetch : ErrorType(R.string.error_type_backup_codes_fetch)
     object TwoFAMissing : ErrorType(R.string.error_type_two_fa_missing)
+    object Registration : ErrorType(R.string.error_type_registration_failed)
+    object InvalidEmail: ErrorType(R.string.error_type_invalid_email)
 }

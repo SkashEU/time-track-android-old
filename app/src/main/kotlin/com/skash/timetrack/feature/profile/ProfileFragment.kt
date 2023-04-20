@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.skash.timetrack.R
+import com.skash.timetrack.core.helper.sharedprefs.clearAuthData
+import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.core.menu.ProfileSectionEntryType
 import com.skash.timetrack.core.model.Workspace
 import com.skash.timetrack.databinding.FragmentProfileBinding
 import com.skash.timetrack.feature.adapter.ProfileSectionListAdapter
+import com.skash.timetrack.feature.auth.login.LoginActivity
 import com.skash.timetrack.feature.profile.username.NameChangeFragment
 import com.skash.timetrack.feature.workspace.WorkspaceSelectionBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,6 +34,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         _binding = FragmentProfileBinding.bind(view)
 
+        bindActions()
         observeWorkspaceChanges()
         observeUsernameChanges()
 
@@ -53,6 +57,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             findNavController().navigate(
                 navDirection
             )
+        }
+    }
+
+    private fun bindActions() {
+        binding.logoutButton.setOnClickListener {
+            requireContext().getPrefs().clearAuthData()
+            LoginActivity.launch(requireContext())
+            requireActivity().finish()
         }
     }
 

@@ -41,7 +41,7 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.skash.timetrack.feature.profile.ProfileFragment"
-        android:label="Profile"
+        android:label="My Account"
         tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/navigate_to_workspace_selection"
