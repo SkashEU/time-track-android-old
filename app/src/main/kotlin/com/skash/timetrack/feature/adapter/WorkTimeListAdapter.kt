@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.time.formatElapsedTime
+import com.skash.timetrack.core.time.secondsToHoursMinutesSeconds
 import com.skash.timetrack.databinding.ListItemWorkTimeBinding
 
 class WorkTimeListAdapter : ListAdapter<WorkTime, WorkTimeViewHolder>(WorkTimeDiffUtil()) {
@@ -26,7 +28,10 @@ class WorkTimeViewHolder(
 
     fun bind(workTime: WorkTime) {
         // TODO: Calculate Time dif etc
-        binding.amountTextView.text = "00:05:22"
+        binding.amountTextView.text =
+            workTime.duration.secondsToHoursMinutesSeconds().let { (hours, minutes, seconds) ->
+                formatElapsedTime(hours, minutes, seconds)
+            }
     }
 }
 

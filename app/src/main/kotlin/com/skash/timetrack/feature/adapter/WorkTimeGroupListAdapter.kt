@@ -32,7 +32,7 @@ class WorkTimeGroupViewHolder(
     private val binding: ListItemWorkTimeGroupBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    private val adapter = WorkTimeListAdapter()
+    private val adapter = WorkTimeSectionListAdapter()
 
     fun bind(group: WorkTimeGroup) {
         binding.dateTextView.text = WorkTimeGroupListAdapter.dateFormat.format(group.date)

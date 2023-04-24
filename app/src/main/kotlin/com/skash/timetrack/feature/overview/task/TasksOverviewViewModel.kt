@@ -3,12 +3,12 @@ package com.skash.timetrack.feature.overview.task
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TaskGroup
+import com.skash.timetrack.core.model.TaskSection
 import com.skash.timetrack.core.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -58,9 +58,23 @@ class TasksOverviewViewModel @Inject constructor(
         val groupedTasks = tasks.groupBy {
             it.startedAt.toInstant().truncatedTo(ChronoUnit.DAYS)
         }.map { (time, tasks) ->
+
+            val sections = tasks.groupBy {
+                "${it.description}-${it.project}"
+            }.map {
+                it.value
+            }.map {
+                TaskSection(
+                    Date(time.toEpochMilli()),
+                    it,
+                    it.first().project,
+                    it.first().description
+                )
+            }
+
             TaskGroup(
                 Date(time.toEpochMilli()),
-                tasks
+                sections
             )
         }
 

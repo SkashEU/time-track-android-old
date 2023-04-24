@@ -1,6 +1,7 @@
 package com.skash.timetrack.core.repository
 
 import com.skash.timetrack.core.cache.model.RealmTask
+import com.skash.timetrack.core.model.Client
 import com.skash.timetrack.core.model.Project
 import com.skash.timetrack.core.model.Task
 import io.reactivex.rxjava3.core.Observable
@@ -31,19 +32,46 @@ class RealmTaskRepository @Inject constructor(
     }
 
     override fun fetchTasks(): Observable<List<Task>> {
+        val testProject = Project(
+            UUID.randomUUID(),
+            "Test Project",
+            "#f1c453",
+            Client(UUID.randomUUID(), "Test Client")
+        )
         return Observable.just(
             listOf(
                 Task(
                     1,
-                    Project(1, "Test Project", "#f1c453", UUID.randomUUID()),
+                    testProject,
                     "Test Time",
                     Date(),
                     Date(),
-                    10
+                    1032
                 ),
                 Task(
                     2,
-                    Project(1, "Test Project", "#f1c453", UUID.randomUUID()),
+                    testProject,
+                    "Test Time",
+                    Date(),
+                    Date(),
+                    1000
+                ),
+                Task(
+                    3,
+                    testProject,
+                    "Test Time",
+                    Date(),
+                    Date(),
+                    1023
+                ),
+                Task(
+                    2,
+                    Project(
+                        UUID.randomUUID(),
+                        "Test Project",
+                        "#f1c453",
+                        Client(UUID.randomUUID(), "Test Client")
+                    ),
                     "Test Time",
                     testDate(),
                     Date(),

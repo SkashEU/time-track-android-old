@@ -16,6 +16,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/amount_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/date_text_view"
+        app:layout_constraintBottom_toBottomOf="@id/date_text_view"/>
+
+
+    <TextView
         android:id="@+id/stopped_time_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

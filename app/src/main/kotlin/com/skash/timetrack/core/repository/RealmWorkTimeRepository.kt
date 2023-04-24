@@ -24,6 +24,8 @@ class RealmWorkTimeRepository @Inject constructor(
         return Observable.just(
             listOf(
                 WorkTime(1, Date(), Date(), 10),
+                WorkTime(1, Date(), Date(), 101),
+                WorkTime(1, Date(), Date(), 103),
                 WorkTime(1, testDate(), Date(), 10),
             )
         )

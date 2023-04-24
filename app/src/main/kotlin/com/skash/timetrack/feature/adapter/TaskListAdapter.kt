@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.skash.timetrack.core.model.Task
+import com.skash.timetrack.core.time.formatElapsedTime
+import com.skash.timetrack.core.time.secondsToHoursMinutesSeconds
 import com.skash.timetrack.databinding.ListItemTaskBinding
 
 class TaskListAdapter : ListAdapter<Task, TaskViewHolder>(TaskDiffUtil()) {
@@ -29,6 +31,11 @@ class TaskViewHolder(
     fun bind(task: Task) {
         binding.taskDescription.text = task.description
         binding.colorDotImageView.isVisible = task.project != null
+        binding.customerTitleTextView.text = "- ${task.project?.client?.title}"
+        binding.amountTextView.text =
+            task.duration.secondsToHoursMinutesSeconds().let { (hours, minutes, seconds) ->
+                formatElapsedTime(hours, minutes, seconds)
+            }
 
         task.project?.let { project ->
             binding.projectTitleTextView.text = project.title

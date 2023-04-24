@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="60dp">
 
-    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
-        android:layout_width="0dp"
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:layout_marginVertical="5dp"
@@ -34,6 +34,6 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.skash.timetrack.core.model.TaskGroup
+import com.skash.timetrack.core.time.formatElapsedTime
+import com.skash.timetrack.core.time.secondsToHoursMinutesSeconds
 import com.skash.timetrack.databinding.ListItemTaskGroupBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -31,11 +33,15 @@ class TaskGroupViewHolder(
     private val binding: ListItemTaskGroupBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    private val adapter = TaskListAdapter()
+    private val adapter = TaskSectionListAdapter()
 
     fun bind(group: TaskGroup) {
         binding.dateTextView.text = TaskGroupListAdapter.dateFormat.format(group.date)
         binding.recyclerView.adapter = adapter
+        binding.amountTextView.text =
+            group.time.secondsToHoursMinutesSeconds().let { (hours, minutes, seconds) ->
+                formatElapsedTime(hours, minutes, seconds)
+            }
         adapter.submitList(group.tasks)
     }
 }

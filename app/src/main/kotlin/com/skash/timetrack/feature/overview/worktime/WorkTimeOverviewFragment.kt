@@ -34,7 +34,6 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
         _binding = FragmentOverviewWorkTimeBinding.bind(view)
 
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.setHasFixedSize(true)
 
         binding.timeTrackFab.setOnClickListener {
             trackingBottomSheet.show(childFragmentManager, null)

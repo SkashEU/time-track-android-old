@@ -3,12 +3,12 @@ package com.skash.timetrack.feature.overview.worktime
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.WorkTime
 import com.skash.timetrack.core.model.WorkTimeGroup
+import com.skash.timetrack.core.model.WorkTimeSection
 import com.skash.timetrack.core.repository.WorkTimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
@@ -60,7 +60,12 @@ class WorkTimeOverviewViewModel @Inject constructor(
         }.map { (time, tasks) ->
             WorkTimeGroup(
                 Date(time.toEpochMilli()),
-                tasks
+                listOf(
+                    WorkTimeSection(
+                        Date(time.toEpochMilli()),
+                        tasks
+                    )
+                )
             )
         }
 

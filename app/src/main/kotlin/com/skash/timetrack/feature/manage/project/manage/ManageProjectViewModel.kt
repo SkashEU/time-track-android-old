@@ -26,6 +26,7 @@ import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -106,7 +107,10 @@ class ManageProjectViewModel @Inject constructor(
             return
         }
 
-        val client = clientSubject.value
+        val client = clientSubject.value ?: kotlin.run {
+            projectStateSubject.onNext(State.Error(ErrorType.NoClientSelected))
+            return
+        }
 
         if (title.isEmpty()) {
             projectStateSubject.onNext(State.Error(ErrorType.NoProjectTitleSelected))
@@ -116,11 +120,11 @@ class ManageProjectViewModel @Inject constructor(
         project.let { existingProject ->
 
             if (existingProject == null) {
-                createProject(title, selectedColor, client)
-            } else if (existingProject.title == title && existingProject.color == selectedColor && existingProject.clientId == client?.id) {
+                createProject(title, selectedColor, client.id)
+            } else if (existingProject.title == title && existingProject.color == selectedColor && existingProject.client.id == client.id) {
                 Observable.just(ProjectModifyWrapper(existingProject, false))
             } else {
-                updateProject(existingProject.id, title, selectedColor, client)
+                updateProject(existingProject.id, title, selectedColor, client.id)
             }.toState {
                 ErrorType.ProjectModify
             }.subscribe { state ->
@@ -163,25 +167,24 @@ class ManageProjectViewModel @Inject constructor(
     private fun createProject(
         title: String,
         color: String,
-        client: Client?
+        clientId: UUID
     ): Observable<ProjectModifyWrapper> {
-        val project = Project(title = title, color = color, clientId = client?.id)
-        return projectRepository.createProject(project)
+
+        return projectRepository.createProject(title, color, clientId)
             .map {
-                ProjectModifyWrapper(project, true)
+                ProjectModifyWrapper(it, true)
             }
     }
 
     private fun updateProject(
-        id: Int,
+        id: UUID,
         title: String,
         color: String,
-        client: Client?
+        clientId: UUID
     ): Observable<ProjectModifyWrapper> {
-        val project = Project(id, title, color, client?.id)
-        return projectRepository.updateProject(project)
+        return projectRepository.updateProject(id, title, color, clientId)
             .map {
-                ProjectModifyWrapper(project, false)
+                ProjectModifyWrapper(it, false)
             }
     }
 
@@ -190,7 +193,7 @@ class ManageProjectViewModel @Inject constructor(
         clientRepository.fetchClientsForOrganization(orgId)
             .doOnNext {
                 it.find { client ->
-                    client.id == project?.clientId
+                    client.id == project?.client?.id
                 }?.let { client ->
                     clientPreselectSubject.onNext(client)
                 }

@@ -6,8 +6,8 @@ import java.util.UUID
 
 @Parcelize
 data class Project(
-    val id: Int = 0,
+    val id: UUID,
     val title: String,
     val color: String,
-    val clientId: UUID?
-): Parcelable
+    val client: Client
+) : Parcelable
