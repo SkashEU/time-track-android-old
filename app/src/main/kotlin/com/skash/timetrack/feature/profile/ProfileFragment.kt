@@ -2,6 +2,8 @@ package com.skash.timetrack.feature.profile
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,6 +15,8 @@ import com.skash.timetrack.core.model.Workspace
 import com.skash.timetrack.databinding.FragmentProfileBinding
 import com.skash.timetrack.feature.adapter.ProfileSectionListAdapter
 import com.skash.timetrack.feature.auth.login.LoginActivity
+import com.skash.timetrack.feature.profile.avatar.ManageAvatarBottomSheet
+import com.skash.timetrack.feature.profile.avatar.ManageAvatarOption
 import com.skash.timetrack.feature.profile.username.NameChangeFragment
 import com.skash.timetrack.feature.workspace.WorkspaceSelectionBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,6 +32,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val adapter = ProfileSectionListAdapter(onEntryClicked = {
         viewModel.onProfileSectionClicked(it.type)
     })
+
+    private val manageAvatarBottomSheet = ManageAvatarBottomSheet(onOptionSelected = { option ->
+        when (option) {
+            ManageAvatarOption.REMOVE -> TODO()
+            ManageAvatarOption.MODIFY -> photoPickContract.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        }
+    })
+
+    private val photoPickContract =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+            binding.pfpImageView.setImageURI(it)
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,6 +85,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             requireContext().getPrefs().clearAuthData()
             LoginActivity.launch(requireContext())
             requireActivity().finish()
+        }
+
+        binding.pfpImageView.setOnClickListener {
+            manageAvatarBottomSheet.show(childFragmentManager, null)
         }
     }
 

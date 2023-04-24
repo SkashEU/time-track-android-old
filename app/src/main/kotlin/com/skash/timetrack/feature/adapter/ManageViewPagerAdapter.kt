@@ -18,8 +18,8 @@ class ManageViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> ProjectsFragment()
-            1 -> ClientsFragment()
+            0 -> ClientsFragment()
+            1 -> ProjectsFragment()
             2 -> TeamFragment()
             else -> throw IllegalArgumentException("Valid positions are 0 - ${itemCount - 1}")
         }
@@ -27,8 +27,8 @@ class ManageViewPagerAdapter(
 
     fun getTitleForPosition(position: Int): Int {
         return when (position) {
-            0 -> R.string.title_manage_projects
-            1 -> R.string.title_manage_clients
+            0 -> R.string.title_manage_clients
+            1 -> R.string.title_manage_projects
             2 -> R.string.title_manage_team
             else -> throw IllegalArgumentException("Valid positions are 0 - ${itemCount - 1}")
         }
