@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData
 import com.skash.timetrack.TimeTrack
 import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
-import com.skash.timetrack.core.helper.sharedprefs.getSelectedWorkspaceUUID
-import com.skash.timetrack.core.helper.sharedprefs.saveSelectedOrganization
+import com.skash.timetrack.core.helper.sharedprefs.getPrefs
+import com.skash.timetrack.core.helper.sharedprefs.getSelectedWorkspace
 import com.skash.timetrack.core.helper.sharedprefs.saveSelectedWorkspace
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
@@ -32,8 +32,7 @@ class WorkspaceSelectionViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val selectedWorkspace = application.getSelectedWorkspaceUUID()
-    private val selectedOrganization = application.getSelectedWorkspaceUUID()
+    private val selectedWorkspace = application.getPrefs().getSelectedWorkspace()
 
     private val organizationsStateSubject =
         BehaviorSubject.create<State<List<OrganizationSelectionWrapper>>>()
@@ -69,6 +68,10 @@ class WorkspaceSelectionViewModel @Inject constructor(
             .addTo(subscriptions)
 
         fetchSelfUsersOrganizations()
+
+        if (selectedWorkspace != null) {
+            fetchWorkspacesForOrganization(selectedWorkspace.organizationId)
+        }
     }
 
     fun saveSelectedOptions() {
@@ -86,9 +89,7 @@ class WorkspaceSelectionViewModel @Inject constructor(
             return
         }
 
-        context.saveSelectedWorkspace(workspace)
-        context.saveSelectedOrganization(org)
-
+        context.getPrefs().saveSelectedWorkspace(workspace)
         saveStateSubject.onNext(State.Success(workspace))
     }
 
@@ -143,7 +144,7 @@ class WorkspaceSelectionViewModel @Inject constructor(
                 it.map { workspace ->
                     WorkspaceSelectionWrapper(
                         workspace,
-                        isSelected = workspace.id == selectedWorkspace
+                        isSelected = workspace.id == selectedWorkspace?.id
                     )
                 }
             }
@@ -162,7 +163,7 @@ class WorkspaceSelectionViewModel @Inject constructor(
                 it.map { org ->
                     OrganizationSelectionWrapper(
                         org,
-                        isSelected = org.id == selectedOrganization
+                        isSelected = org.id == selectedWorkspace?.organizationId
                     )
                 }
             }

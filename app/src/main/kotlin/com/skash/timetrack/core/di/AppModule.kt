@@ -4,12 +4,14 @@ import android.content.Context
 import com.skash.timetrack.BuildConfig
 import com.skash.timetrack.api.network.ApiClient
 import com.skash.timetrack.api.network.api.AuthApi
+import com.skash.timetrack.api.network.api.UserApi
+import com.skash.timetrack.api.network.api.WorkspaceApi
 import com.skash.timetrack.core.repository.ApiAuthRepository
 import com.skash.timetrack.core.repository.ApiClientRepository
 import com.skash.timetrack.core.repository.ApiOrganizationRepository
 import com.skash.timetrack.core.repository.ApiProjectRepository
 import com.skash.timetrack.core.repository.ApiTeamRepository
-import com.skash.timetrack.core.repository.ApiUserDataRepository
+import com.skash.timetrack.core.repository.ApiUserRepository
 import com.skash.timetrack.core.repository.ApiWorkspaceRepository
 import com.skash.timetrack.core.repository.AuthRepository
 import com.skash.timetrack.core.repository.ClientRepository
@@ -23,7 +25,7 @@ import com.skash.timetrack.core.repository.RealmWorkTimeRepository
 import com.skash.timetrack.core.repository.SharedPrefsProfileSectionRepository
 import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.TeamRepository
-import com.skash.timetrack.core.repository.UserDataRepository
+import com.skash.timetrack.core.repository.UserRepository
 import com.skash.timetrack.core.repository.WorkTimeRepository
 import com.skash.timetrack.core.repository.WorkspaceRepository
 import dagger.Module
@@ -44,9 +46,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        authApi: AuthApi
+        authApi: AuthApi,
+        @ApplicationContext
+        context: Context
     ): AuthRepository {
-        return ApiAuthRepository(authApi)
+        return ApiAuthRepository(authApi, context)
     }
 
     @Provides
@@ -81,11 +85,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideProfileSectionRepository(
-        @ApplicationContext
-        context: Context
-    ): ProfileSectionRepository {
-        return SharedPrefsProfileSectionRepository(context)
+    fun provideProfileSectionRepository(): ProfileSectionRepository {
+        return SharedPrefsProfileSectionRepository()
     }
 
     @Provides
@@ -102,26 +103,50 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkspaceRepository(): WorkspaceRepository {
-        return ApiWorkspaceRepository()
+    fun provideWorkspaceRepository(
+        workspaceApi: WorkspaceApi,
+        @ApplicationContext
+        context: Context
+    ): WorkspaceRepository {
+        return ApiWorkspaceRepository(workspaceApi, context)
     }
 
     @Provides
     @Singleton
-    fun provideOrganizationRepository(): OrganizationRepository {
-        return ApiOrganizationRepository()
+    fun provideOrganizationRepository(
+        userApi: UserApi,
+        @ApplicationContext
+        context: Context
+    ): OrganizationRepository {
+        return ApiOrganizationRepository(userApi, context)
     }
 
     @Provides
     @Singleton
-    fun provideUserDataRepository(): UserDataRepository {
-        return ApiUserDataRepository()
+    fun provideUserDataRepository(
+        userApi: UserApi,
+        @ApplicationContext
+        context: Context
+    ): UserRepository {
+        return ApiUserRepository(userApi, context)
     }
 
     @Provides
     @Singleton
     fun provideAuthApi(): AuthApi {
         return apiClient.createService(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(): UserApi {
+        return apiClient.createService(UserApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkspaceApi(): WorkspaceApi {
+        return apiClient.createService(WorkspaceApi::class.java)
     }
 
     @Provides

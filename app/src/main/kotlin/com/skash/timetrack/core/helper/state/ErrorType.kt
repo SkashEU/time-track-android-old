@@ -39,4 +39,6 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object TwoFAMissing : ErrorType(R.string.error_type_two_fa_missing)
     object Registration : ErrorType(R.string.error_type_registration_failed)
     object InvalidEmail: ErrorType(R.string.error_type_invalid_email)
+    object AvatarUpload: ErrorType(R.string.error_type_avatar_upload)
+    object AuthenticatedUserFetch: ErrorType(R.string.error_type_authenticated_user_fetch)
 }

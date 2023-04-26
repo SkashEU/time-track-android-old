@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.skash.timetrack.core.helper.string.toUUID
 import com.skash.timetrack.core.model.AuthData
+import com.skash.timetrack.core.model.Avatar
 import com.skash.timetrack.core.model.Organization
+import com.skash.timetrack.core.model.User
 import com.skash.timetrack.core.model.Workspace
 import java.util.UUID
 
@@ -15,9 +18,21 @@ const val SELECTED_WORKSPACE_TITLE = "key_selected_workspace_title"
 const val USER_EMAIL = "key_user_email"
 const val USER_NAME = "key_user_name"
 
-const val SHARED_PREFS_NAME = "secret_shared_prefs"
+private const val SHARED_PREFS_NAME = "secret_shared_prefs"
 
-const val SHARED_PREFS_AUTH_DATA = "auth_data"
+private const val SHARED_PREFS_AUTH_DATA = "auth_data"
+
+private const val SHARED_PREFS_SELF_USER_ID = "self_user_id"
+private const val SHARED_PREFS_SELF_USER_EMAIL = "self_user_email"
+private const val SHARED_PREFS_SELF_USER_AVATAR = "self_user_avatar"
+private const val SHARED_PREFS_SELF_USER_FIRST_NAME = "self_user_first_name"
+private const val SHARED_PREFS_SELF_USER_LAST_NAME = "self_user_last_name"
+
+private const val SHARED_PREFS_SELECTED_WORKSPACE_ID = "selected_workspace_id"
+private const val SHARED_PREFS_SELECTED_WORKSPACE_TITLE = "selected_workspace_title"
+private const val SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID =
+    "selected_workspace_organization_id"
+
 
 fun Context.getPrefs(): SharedPreferences {
     val masterKey = MasterKey.Builder(this)
@@ -43,6 +58,43 @@ fun SharedPreferences.getAuthData(): AuthData {
     return AuthData(
         getString(SHARED_PREFS_AUTH_DATA, "") ?: ""
     )
+}
+
+fun SharedPreferences.saveSelfUser(user: User) {
+    edit()
+        .putString(SHARED_PREFS_SELF_USER_ID, user.id.toString())
+        .putString(SHARED_PREFS_SELF_USER_EMAIL, user.email)
+        .putString(SHARED_PREFS_SELF_USER_FIRST_NAME, user.firstName)
+        .putString(SHARED_PREFS_SELF_USER_LAST_NAME, user.lastName)
+        .putString(SHARED_PREFS_SELF_USER_AVATAR, user.avatar?.fileName)
+        .apply()
+}
+
+fun SharedPreferences.getSelfUser(): User? {
+    val id = getString(SHARED_PREFS_SELF_USER_ID, "")?.toUUID() ?: return null
+    val email = getString(SHARED_PREFS_SELF_USER_EMAIL, "") ?: return null
+    val avatar = getString(SHARED_PREFS_SELF_USER_AVATAR, "")?.let { Avatar(it) }
+
+    val firstName = getString(SHARED_PREFS_SELF_USER_FIRST_NAME, "") ?: return null
+    val lastName = getString(SHARED_PREFS_SELF_USER_LAST_NAME, "") ?: return null
+    return User(
+        id, avatar, email, firstName, lastName
+    )
+}
+
+fun SharedPreferences.getSelectedWorkspace(): Workspace? {
+    val id = getString(SHARED_PREFS_SELECTED_WORKSPACE_ID, "")?.toUUID() ?: return null
+    val title = getString(SHARED_PREFS_SELECTED_WORKSPACE_TITLE, "") ?: return null
+    val organizationId = getString(SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID, "")?.toUUID() ?: return null
+    return Workspace(id, title, organizationId)
+}
+
+fun SharedPreferences.saveSelectedWorkspace(workspace: Workspace) {
+    edit()
+        .putString(SHARED_PREFS_SELECTED_WORKSPACE_ID, workspace.id.toString())
+        .putString(SHARED_PREFS_SELECTED_WORKSPACE_TITLE, workspace.title)
+        .putString(SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID, workspace.organizationId.toString())
+        .apply()
 }
 
 fun SharedPreferences.clearAuthData() {

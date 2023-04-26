@@ -31,7 +31,6 @@ class ProfileSectionEntryViewHolder(
 
     fun bind(entry: ProfileSectionEntry, onEntryClicked: (ProfileSectionEntry) -> Unit) {
         binding.titleTextView.setText(entry.type.titleId)
-        binding.valueTextView.text = entry.value
 
         binding.root.setOnClickListener {
             onEntryClicked(entry)

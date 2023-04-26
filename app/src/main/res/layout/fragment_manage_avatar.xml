@@ -9,8 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-        android:text="Avatar"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="Avatar"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,29 +22,38 @@
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:layout_marginTop="20dp"
         android:text="Change Avatar"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headline_text_view" />
+
+    <TextView
+        android:id="@+id/avatar_max_size_description_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Please select a JPG or PNG under 10mb"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="@id/change_avatar_text_view"
+        app:layout_constraintStart_toStartOf="@id/change_avatar_text_view"
+        app:layout_constraintTop_toBottomOf="@id/change_avatar_text_view" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/change_avatar_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/avatar_max_size_description_text_view" />
 
     <TextView
         android:id="@+id/remove_avatar_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="20dp"
         android:text="Remove Avatar"
         android:textColor="@color/design_default_color_error"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/change_avatar_text_view"
         app:layout_constraintStart_toStartOf="@id/change_avatar_text_view"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"
         app:layout_constraintTop_toBottomOf="@id/divider" />
 
 

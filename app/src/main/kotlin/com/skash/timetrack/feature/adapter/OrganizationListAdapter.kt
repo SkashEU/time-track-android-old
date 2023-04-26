@@ -32,7 +32,7 @@ class OrganizationViewHolder(
         organization: OrganizationSelectionWrapper,
         onOrganizationClicked: (OrganizationSelectionWrapper) -> Unit
     ) {
-        binding.titleTextView.text = organization.organization.title
+        binding.titleTextView.text = organization.organization.name
         binding.checkmarkImageView.isVisible = organization.isSelected
 
         binding.cardView.setOnClickListener {

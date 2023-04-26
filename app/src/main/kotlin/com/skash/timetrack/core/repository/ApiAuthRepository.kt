@@ -1,8 +1,11 @@
 package com.skash.timetrack.core.repository
 
+import android.content.Context
 import com.google.firebase.messaging.FirebaseMessaging
 import com.skash.timetrack.api.network.api.AuthApi
 import com.skash.timetrack.api.network.model.Device
+import com.skash.timetrack.core.helper.sharedprefs.getAuthData
+import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.core.helper.string.encode
 import com.skash.timetrack.core.model.AuthData
 import com.skash.timetrack.core.model.DeviceInformation
@@ -11,7 +14,8 @@ import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class ApiAuthRepository @Inject constructor(
-    private val authApi: AuthApi
+    private val authApi: AuthApi,
+    private val context: Context
 ) : AuthRepository {
 
     override fun login(
@@ -34,13 +38,15 @@ class ApiAuthRepository @Inject constructor(
             }
     }
 
-    override fun registerUser(name: String, email: String, password: String): Observable<User> {
-        // Create user call
-        return Observable.just(User(1))
-    }
-
     override fun resetPassword(email: String): Observable<Unit> {
         return Observable.just(Unit)
+    }
+
+    override fun fetchAuthenticatedUser(): Observable<User> {
+        return authApi.authMeGet(context.getPrefs().getAuthData().bearer)
+            .map {
+                User(it)
+            }
     }
 
     private fun fetchPushToken(): Observable<String> {

@@ -18,7 +18,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 
 @AndroidEntryPoint
-class WorkspaceSelectionBottomSheet : FullscreenDialogFragment(
+class WorkspaceSelectionFragment : FullscreenDialogFragment(
     R.layout.fragment_workspace_selection
 ) {
 

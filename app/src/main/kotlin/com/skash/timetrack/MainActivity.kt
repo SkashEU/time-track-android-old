@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,6 +18,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.skash.timetrack.core.helper.sharedprefs.getAuthData
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
+import com.skash.timetrack.core.helper.sharedprefs.saveSelfUser
+import com.skash.timetrack.core.helper.state.handle
+import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,16 +31,22 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
-    companion object {
-        fun launch(context: Context) {
-            context.startActivity(Intent(context, MainActivity::class.java))
-        }
-    }
+    private val viewModel by viewModels<MainViewModel>()
 
     private val permissionRequestLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { hasPermission ->
         Log.d(javaClass.name, "POST_NOTIFICATIONS permission requested. Accepted? $hasPermission")
+    }
+
+    private val loadingDialog by lazy {
+        DefaultLoadingDialog(this)
+    }
+
+    companion object {
+        fun launch(context: Context) {
+            context.startActivity(Intent(context, MainActivity::class.java))
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +71,12 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(this, getPrefs().getAuthData().bearer, Toast.LENGTH_SHORT).show()
         requestPermissions()
+
+        viewModel.authenticatedUserLiveData.observe(this) { state ->
+            state.handle(this, loadingDialog, onSuccess = {
+                getPrefs().saveSelfUser(it)
+            })
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

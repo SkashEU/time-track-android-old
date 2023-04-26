@@ -9,7 +9,7 @@ import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.sharedprefs.saveUsername
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
-import com.skash.timetrack.core.repository.UserDataRepository
+import com.skash.timetrack.core.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NameChangeViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepository,
+    private val userDataRepository: UserRepository,
     application: Application
 ) : AndroidViewModel(application) {
 

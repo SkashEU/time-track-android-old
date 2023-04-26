@@ -62,7 +62,7 @@
 
     <dialog
         android:id="@+id/navigation_workspace_selection"
-        android:name="com.skash.timetrack.feature.workspace.WorkspaceSelectionBottomSheet"
+        android:name="com.skash.timetrack.feature.workspace.WorkspaceSelectionFragment"
         android:label="WorkspaceSelectionBottomSheet" />
     <dialog
         android:id="@+id/navigation_name_change"

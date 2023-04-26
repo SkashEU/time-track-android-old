@@ -8,6 +8,7 @@ import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.AuthData
 import com.skash.timetrack.core.repository.AuthRepository
+import com.skash.timetrack.core.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -16,8 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val authRepository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val registrationStateSubject = BehaviorSubject.create<State<AuthData>>()
     private val registrationStateStream = registrationStateSubject.hide()
@@ -33,7 +35,7 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun registerUser(name: String, email: String, password: String) {
-        authRepository.registerUser(name, email, password)
+        userRepository.registerUser(name, email, password)
             .flatMap {
                 authRepository.login(email, password)
             }

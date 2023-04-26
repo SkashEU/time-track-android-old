@@ -1,18 +1,11 @@
 package com.skash.timetrack.core.repository
 
-import android.content.Context
-import com.skash.timetrack.core.helper.sharedprefs.getUserEmail
-import com.skash.timetrack.core.helper.sharedprefs.getUserName
-import com.skash.timetrack.core.helper.sharedprefs.getWorkspaceTitle
 import com.skash.timetrack.core.menu.ProfileSection
 import com.skash.timetrack.core.menu.ProfileSectionEntry
 import com.skash.timetrack.core.menu.ProfileSectionEntryType
 import io.reactivex.rxjava3.core.Observable
-import javax.inject.Inject
 
-class SharedPrefsProfileSectionRepository @Inject constructor(
-    private val context: Context
-) : ProfileSectionRepository {
+class SharedPrefsProfileSectionRepository : ProfileSectionRepository {
 
     override fun fetchProfileSections(): Observable<List<ProfileSection>> {
         return Observable.just(
@@ -20,36 +13,30 @@ class SharedPrefsProfileSectionRepository @Inject constructor(
                 ProfileSection.Workspace(
                     listOf(
                         ProfileSectionEntry(
-                            ProfileSectionEntryType.WORKSPACE,
-                            context.getWorkspaceTitle()
+                            ProfileSectionEntryType.WORKSPACE
                         )
                     )
                 ),
                 ProfileSection.AccountInformation(
                     listOf(
                         ProfileSectionEntry(
-                            ProfileSectionEntryType.USERNAME,
-                            context.getUserName()
+                            ProfileSectionEntryType.USERNAME
                         ),
                         ProfileSectionEntry(
-                            ProfileSectionEntryType.EMAIL,
-                            context.getUserEmail()
+                            ProfileSectionEntryType.EMAIL
                         ),
                         ProfileSectionEntry(
-                            ProfileSectionEntryType.PASSWORD,
-                            ""
+                            ProfileSectionEntryType.PASSWORD
                         )
                     )
                 ),
                 ProfileSection.TwoFactorAuthentication(
                     listOf(
                         ProfileSectionEntry(
-                            ProfileSectionEntryType.BACKUP_CODES,
-                            ""
+                            ProfileSectionEntryType.BACKUP_CODES
                         ),
                         ProfileSectionEntry(
-                            ProfileSectionEntryType.TWO_FACTOR_AUTH,
-                            ""
+                            ProfileSectionEntryType.TWO_FACTOR_AUTH
                         )
                     )
                 )
