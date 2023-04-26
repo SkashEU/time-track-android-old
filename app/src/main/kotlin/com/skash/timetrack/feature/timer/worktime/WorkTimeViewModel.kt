@@ -33,10 +33,10 @@ class WorkTimeViewModel @Inject constructor(
     private val _timerActionLiveData = MutableLiveData<Boolean>()
     val timerActionLiveData: LiveData<Boolean> get() = _timerActionLiveData
 
-    private val workTimeCreationStateSubject = PublishSubject.create<State<Unit>>()
+    private val workTimeCreationStateSubject = PublishSubject.create<State<WorkTime>>()
     private val workTimeCreationStateStream = workTimeCreationStateSubject.hide()
-    private val _workTimeCreationStateLiveData = MutableLiveData<State<Unit>>()
-    val workTimeCreationStateLiveData: LiveData<State<Unit>> get() = _workTimeCreationStateLiveData
+    private val _workTimeCreationStateLiveData = MutableLiveData<State<WorkTime>>()
+    val workTimeCreationStateLiveData: LiveData<State<WorkTime>> get() = _workTimeCreationStateLiveData
 
     private val subscriptions = CompositeDisposable()
 

@@ -72,7 +72,7 @@ dependencies {
     implementation("io.realm:realm-gradle-plugin:10.13.2-transformer-api")
 
     // API
-    implementation("com.skash.timetrack.api:time-track-openapi-client:0.5.10")
+    implementation("com.skash.timetrack.api:time-track-openapi-client:0.5.12")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
     // Firebase

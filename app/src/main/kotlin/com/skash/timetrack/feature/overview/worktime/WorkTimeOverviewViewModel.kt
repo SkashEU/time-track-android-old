@@ -29,6 +29,8 @@ class WorkTimeOverviewViewModel @Inject constructor(
     private val _workTimeGroupsLiveData = MutableLiveData<State<List<WorkTimeGroup>>>()
     val workTimeGroupsLiveData: LiveData<State<List<WorkTimeGroup>>> get() = _workTimeGroupsLiveData
 
+    private val workTimeCacheSubject = BehaviorSubject.create<List<WorkTime>>()
+
     private val subscriptions = CompositeDisposable()
 
     init {
@@ -39,10 +41,20 @@ class WorkTimeOverviewViewModel @Inject constructor(
         fetchWorkTimes()
     }
 
+    fun attachWorkTime(workTime: WorkTime) {
+        val cachedWorkTimes = workTimeCacheSubject.value ?: emptyList()
+        val updatedList = cachedWorkTimes + workTime
+        workTimeCacheSubject.onNext(updatedList)
+        workTimeGroupsSubject.onNext(State.Success(groupWorkTimes(updatedList)))
+    }
+
     private fun fetchWorkTimes() {
         workTimeRepository.fetchWorkTimes()
+            .doOnNext {
+                workTimeCacheSubject.onNext(it)
+            }
             .flatMap {
-                groupWorkTimes(it)
+                Observable.just(groupWorkTimes(it))
             }
             .toState {
                 ErrorType.TaskFetch
@@ -53,7 +65,7 @@ class WorkTimeOverviewViewModel @Inject constructor(
             .addTo(subscriptions)
     }
 
-    private fun groupWorkTimes(workTimes: List<WorkTime>): Observable<List<WorkTimeGroup>> {
+    private fun groupWorkTimes(workTimes: List<WorkTime>): List<WorkTimeGroup> {
         // TODO: Deeper grouping by same project at same day etc
         val groupedTasks = workTimes.groupBy {
             it.startedAt.toInstant().truncatedTo(ChronoUnit.DAYS)
@@ -69,7 +81,7 @@ class WorkTimeOverviewViewModel @Inject constructor(
             )
         }
 
-        return Observable.just(groupedTasks)
+        return groupedTasks
     }
 
     override fun onCleared() {

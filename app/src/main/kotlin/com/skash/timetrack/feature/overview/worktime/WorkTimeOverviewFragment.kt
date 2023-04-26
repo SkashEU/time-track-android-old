@@ -22,7 +22,9 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
 
     private val adapter = WorkTimeGroupListAdapter()
 
-    private val trackingBottomSheet = WorkTimeBottomSheet()
+    private val trackingBottomSheet = WorkTimeBottomSheet(onNewEntryCreated = {
+        viewModel.attachWorkTime(it)
+    })
 
     private val loadingDialog by lazy {
         DefaultLoadingDialog(requireContext())

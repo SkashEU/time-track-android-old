@@ -17,6 +17,7 @@ import com.skash.timetrack.core.helper.context.stopWorkTimeTimer
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.TimerStatus
+import com.skash.timetrack.core.model.WorkTime
 import com.skash.timetrack.databinding.FragmentWorktimeBinding
 import com.skash.timetrack.feature.broadcast.ElapsedTimeBroadcastReceiver
 import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
@@ -30,7 +31,9 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class WorkTimeBottomSheet : BottomSheetDialogFragment(R.layout.fragment_worktime) {
+class WorkTimeBottomSheet(
+    val onNewEntryCreated: (WorkTime) -> Unit
+) : BottomSheetDialogFragment(R.layout.fragment_worktime) {
 
     private var _binding: FragmentWorktimeBinding? = null
     private val binding get() = _binding!!
@@ -95,7 +98,7 @@ class WorkTimeBottomSheet : BottomSheetDialogFragment(R.layout.fragment_worktime
 
         viewModel.workTimeCreationStateLiveData.observe(viewLifecycleOwner) { creationState ->
             creationState.handle(requireContext(), loadingDialog, onSuccess = {
-                Log.d(javaClass.name, "Saved Project Time")
+                onNewEntryCreated(it)
                 updateTimer(0)
             })
         }
