@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
+import com.skash.timetrack.core.helper.context.reloadWorkTime
 import com.skash.timetrack.core.helper.dialog.FullscreenDialogFragment
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.core.helper.sharedprefs.saveSelectedWorkspace
@@ -65,6 +66,7 @@ class WorkspaceSelectionFragment : FullscreenDialogFragment(
         viewModel.saveStateLiveData.observe(viewLifecycleOwner) { state ->
             state.handle(requireContext(), loadingDialog, onSuccess = {
                 requireContext().getPrefs().saveSelectedWorkspace(it)
+                requireContext().reloadWorkTime()
                 notifyCallerAboutChanges(it)
                 dismiss()
             })

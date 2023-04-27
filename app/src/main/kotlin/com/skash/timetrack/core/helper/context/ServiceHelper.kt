@@ -2,6 +2,7 @@ package com.skash.timetrack.core.helper.context
 
 import android.content.Context
 import android.content.Intent
+import com.skash.timetrack.feature.service.ReloadService
 import com.skash.timetrack.feature.service.TaskTimerService
 import com.skash.timetrack.feature.service.TimerService
 import com.skash.timetrack.feature.service.WorkTimeTimerService
@@ -129,6 +130,32 @@ fun Context.moveWorkTimeTimerToBackground() {
     service.putExtra(
         TimerService.TIMER_ACTION,
         TimerService.MOVE_TO_BACKGROUND
+    )
+
+    startService(service)
+}
+
+fun Context.reloadWorkTime() {
+    val service = Intent(
+        this,
+        ReloadService::class.java
+    )
+    service.putExtra(
+        ReloadService.RELOAD_ACTION,
+        ReloadService.RELOAD_WORK_TIME
+    )
+
+    startService(service)
+}
+
+fun Context.reloadTasks() {
+    val service = Intent(
+        this,
+        ReloadService::class.java
+    )
+    service.putExtra(
+        ReloadService.RELOAD_ACTION,
+        ReloadService.RELOAD_TASKS
     )
 
     startService(service)

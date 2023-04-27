@@ -26,10 +26,12 @@ import com.skash.timetrack.core.repository.ProfileSectionRepository
 import com.skash.timetrack.core.repository.ProjectColorRepository
 import com.skash.timetrack.core.repository.ProjectRepository
 import com.skash.timetrack.core.repository.RealmProjectColorRepository
+import com.skash.timetrack.core.repository.RealmWorkTimeCacheRepository
 import com.skash.timetrack.core.repository.SharedPrefsProfileSectionRepository
 import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.TeamRepository
 import com.skash.timetrack.core.repository.UserRepository
+import com.skash.timetrack.core.repository.WorkTimeCacheRepository
 import com.skash.timetrack.core.repository.WorkTimeRepository
 import com.skash.timetrack.core.repository.WorkspaceRepository
 import dagger.Module
@@ -70,6 +72,14 @@ object AppModule {
         context: Context
     ): ProjectRepository {
         return ApiProjectRepository(projectApi, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkTimeCacheRepository(
+        scheduler: Scheduler
+    ): WorkTimeCacheRepository {
+        return RealmWorkTimeCacheRepository(scheduler)
     }
 
     @Provides

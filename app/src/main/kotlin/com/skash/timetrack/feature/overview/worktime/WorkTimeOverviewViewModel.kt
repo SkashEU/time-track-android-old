@@ -9,7 +9,7 @@ import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.WorkTime
 import com.skash.timetrack.core.model.WorkTimeGroup
 import com.skash.timetrack.core.model.WorkTimeSection
-import com.skash.timetrack.core.repository.WorkTimeRepository
+import com.skash.timetrack.core.repository.WorkTimeCacheRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkTimeOverviewViewModel @Inject constructor(
-    private val workTimeRepository: WorkTimeRepository
+    private val workTimeRepository: WorkTimeCacheRepository
 ) : ViewModel() {
 
     private val workTimeGroupsSubject = BehaviorSubject.create<State<List<WorkTimeGroup>>>()
@@ -47,7 +47,7 @@ class WorkTimeOverviewViewModel @Inject constructor(
     }
 
     fun fetchWorkTimes() {
-        workTimeRepository.fetchWorkTimes()
+        workTimeRepository.fetchWorkTime()
             .doOnNext {
                 workTimeCacheSubject.onNext(it)
             }
