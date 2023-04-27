@@ -41,4 +41,5 @@ sealed class ErrorType(@StringRes val errorMessage: Int) {
     object InvalidEmail: ErrorType(R.string.error_type_invalid_email)
     object AvatarUpload: ErrorType(R.string.error_type_avatar_upload)
     object AuthenticatedUserFetch: ErrorType(R.string.error_type_authenticated_user_fetch)
+    object SelectedWorkspaceUpdate: ErrorType(R.string.error_type_update_selected_workspace)
 }

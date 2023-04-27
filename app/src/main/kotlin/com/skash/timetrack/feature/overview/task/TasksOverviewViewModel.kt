@@ -29,6 +29,9 @@ class TasksOverviewViewModel @Inject constructor(
     private val _taskGroupsLiveData = MutableLiveData<State<List<TaskGroup>>>()
     val taskGroupsLiveData: LiveData<State<List<TaskGroup>>> get() = _taskGroupsLiveData
 
+    private val taskCacheSubject = BehaviorSubject.create<List<Task>>()
+
+
     private val subscriptions = CompositeDisposable()
 
     init {
@@ -39,10 +42,20 @@ class TasksOverviewViewModel @Inject constructor(
         fetchTasks()
     }
 
+    fun attachTask(task: Task) {
+        val cachedTasks = taskCacheSubject.value ?: emptyList()
+        val updatedList = cachedTasks + task
+        taskCacheSubject.onNext(updatedList)
+        taskGroupsSubject.onNext(State.Success(groupTasks(updatedList)))
+    }
+
     private fun fetchTasks() {
         taskRepository.fetchTasks()
+            .doOnNext {
+                taskCacheSubject.onNext(it)
+            }
             .flatMap {
-                groupTasks(it)
+                Observable.just(groupTasks(it))
             }
             .toState {
                 ErrorType.TaskFetch
@@ -53,8 +66,7 @@ class TasksOverviewViewModel @Inject constructor(
             .addTo(subscriptions)
     }
 
-    private fun groupTasks(tasks: List<Task>): Observable<List<TaskGroup>> {
-        // TODO: Deeper grouping by same project at same day etc
+    private fun groupTasks(tasks: List<Task>): List<TaskGroup> {
         val groupedTasks = tasks.groupBy {
             it.startedAt.toInstant().truncatedTo(ChronoUnit.DAYS)
         }.map { (time, tasks) ->
@@ -78,7 +90,7 @@ class TasksOverviewViewModel @Inject constructor(
             )
         }
 
-        return Observable.just(groupedTasks)
+        return groupedTasks
     }
 
     override fun onCleared() {

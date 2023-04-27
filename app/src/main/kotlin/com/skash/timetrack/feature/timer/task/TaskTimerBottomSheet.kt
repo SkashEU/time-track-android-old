@@ -4,10 +4,13 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding4.view.clicks
+import com.jakewharton.rxbinding4.widget.itemClickEvents
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.context.getTaskTimerStatus
 import com.skash.timetrack.core.helper.context.moveTaskTimerToBackground
@@ -16,7 +19,10 @@ import com.skash.timetrack.core.helper.context.startTaskTimer
 import com.skash.timetrack.core.helper.context.stopTaskTimer
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
+import com.skash.timetrack.core.model.Project
+import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TimerStatus
+import com.skash.timetrack.core.model.WorkTime
 import com.skash.timetrack.databinding.FragmentProjectTimeBinding
 import com.skash.timetrack.feature.broadcast.ElapsedTimeBroadcastReceiver
 import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
@@ -30,7 +36,9 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project_time) {
+class TaskTimerBottomSheet(
+    val onNewEntryCreated: (Task) -> Unit
+) : BottomSheetDialogFragment(R.layout.fragment_project_time) {
 
     private var _binding: FragmentProjectTimeBinding? = null
     private val binding get() = _binding!!
@@ -50,6 +58,14 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
         }
     )
 
+    private val dropdownAdapter by lazy {
+        ArrayAdapter(
+            requireContext(),
+            R.layout.list_item_dropdown,
+            mutableListOf<Project>()
+        )
+    }
+
     private val dayFormatter = SimpleDateFormat("EEEE", Locale.getDefault())
     private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
@@ -64,6 +80,8 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
 
         _binding = FragmentProjectTimeBinding.bind(view)
 
+        (binding.projectInputLayout.editText as? AutoCompleteTextView)?.setAdapter(dropdownAdapter)
+
         bindActions()
         setupView()
 
@@ -74,6 +92,12 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
             }
 
             requireContext().stopTaskTimer()
+        }
+
+        viewModel.projectStateLiveData.observe(viewLifecycleOwner) { state ->
+            state.handle(requireContext(), loadingDialog, onSuccess = { projects ->
+                dropdownAdapter.addAll(projects)
+            })
         }
 
         viewModel.timerStatusLiveData.observe(viewLifecycleOwner) { status ->
@@ -96,7 +120,7 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
 
         viewModel.taskTimeCreationStateLiveData.observe(viewLifecycleOwner) { creationState ->
             creationState.handle(requireContext(), loadingDialog, onSuccess = {
-                Log.d(javaClass.name, "Saved Project Time")
+                onNewEntryCreated(it)
                 updateTimer(0)
             })
         }
@@ -106,6 +130,16 @@ class TaskTimerBottomSheet : BottomSheetDialogFragment(R.layout.fragment_project
         binding.timerButton.clicks()
             .subscribe {
                 viewModel.startOrStopTimer()
+            }
+            .addTo(subscriptions)
+
+        binding.projectMenu.itemClickEvents()
+            .map {
+                it.position
+            }
+            .subscribe {
+                val client = dropdownAdapter.getItem(it) ?: return@subscribe
+                viewModel.setProject(client)
             }
             .addTo(subscriptions)
     }

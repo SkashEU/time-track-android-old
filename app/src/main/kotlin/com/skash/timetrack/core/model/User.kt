@@ -8,7 +8,8 @@ data class User(
     val avatar: Avatar?,
     val email: String,
     val firstName: String,
-    val lastName: String
+    val lastName: String,
+    val selectedWorkspace: Workspace?
 ) {
 
     val name: String by lazy {
@@ -20,6 +21,7 @@ data class User(
         avatar = apiModel.avatarPath?.let { Avatar(it) },
         email = apiModel.email ?: "",
         firstName = apiModel.firstName ?: "",
-        lastName = apiModel.lastName ?: ""
+        lastName = apiModel.lastName ?: "",
+        selectedWorkspace = apiModel.selectedWorkspace?.let { Workspace(it) }
     )
 }

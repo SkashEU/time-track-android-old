@@ -9,7 +9,6 @@ import com.skash.timetrack.core.helper.livedata.SingleLiveEvent
 import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.core.helper.sharedprefs.getSelectedWorkspace
-import com.skash.timetrack.core.helper.sharedprefs.saveSelectedWorkspace
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.Organization
@@ -17,6 +16,7 @@ import com.skash.timetrack.core.model.Workspace
 import com.skash.timetrack.core.model.wrapper.OrganizationSelectionWrapper
 import com.skash.timetrack.core.model.wrapper.WorkspaceSelectionWrapper
 import com.skash.timetrack.core.repository.OrganizationRepository
+import com.skash.timetrack.core.repository.UserRepository
 import com.skash.timetrack.core.repository.WorkspaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -29,6 +29,7 @@ import javax.inject.Inject
 class WorkspaceSelectionViewModel @Inject constructor(
     private val workspaceRepository: WorkspaceRepository,
     private val organizationRepository: OrganizationRepository,
+    private val userRepository: UserRepository,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -89,8 +90,18 @@ class WorkspaceSelectionViewModel @Inject constructor(
             return
         }
 
-        context.getPrefs().saveSelectedWorkspace(workspace)
-        saveStateSubject.onNext(State.Success(workspace))
+        userRepository.changeSelectedWorkspace(workspace)
+            .map {
+                workspace
+            }
+            .toState {
+                ErrorType.SelectedWorkspaceUpdate
+            }
+            .subscribe {
+                saveStateSubject.onNext(it)
+            }
+            .addTo(subscriptions)
+
     }
 
     fun markWorkspaceAsSelected(workspace: WorkspaceSelectionWrapper) {
@@ -191,6 +202,4 @@ class WorkspaceSelectionViewModel @Inject constructor(
             it.isSelected
         }?.organization
     }
-
-
 }

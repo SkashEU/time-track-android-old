@@ -18,6 +18,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.skash.timetrack.core.helper.sharedprefs.getAuthData
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
+import com.skash.timetrack.core.helper.sharedprefs.saveSelectedWorkspace
 import com.skash.timetrack.core.helper.sharedprefs.saveSelfUser
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
@@ -75,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.authenticatedUserLiveData.observe(this) { state ->
             state.handle(this, loadingDialog, onSuccess = {
                 getPrefs().saveSelfUser(it)
+                it.selectedWorkspace?.let { workspace -> getPrefs().saveSelectedWorkspace(workspace) }
             })
         }
     }

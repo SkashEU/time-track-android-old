@@ -32,6 +32,8 @@
     <string name="error_type_invalid_email">Please provide a valid Email!</string>
     <string name="error_type_avatar_upload">Couldn\'t upload the selected avatar. Please try again!</string>
     <string name="error_type_authenticated_user_fetch">Failed to authenticate. Please try again!</string>
+    <string name="error_type_update_selected_workspace">Failed to select workspace. Please try again!</string>
+
 
     <!-- Login -->
     <string name="hint_email">Email</string>

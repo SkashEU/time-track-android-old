@@ -78,14 +78,15 @@ fun SharedPreferences.getSelfUser(): User? {
     val firstName = getString(SHARED_PREFS_SELF_USER_FIRST_NAME, "") ?: return null
     val lastName = getString(SHARED_PREFS_SELF_USER_LAST_NAME, "") ?: return null
     return User(
-        id, avatar, email, firstName, lastName
+        id, avatar, email, firstName, lastName, getSelectedWorkspace()
     )
 }
 
 fun SharedPreferences.getSelectedWorkspace(): Workspace? {
     val id = getString(SHARED_PREFS_SELECTED_WORKSPACE_ID, "")?.toUUID() ?: return null
     val title = getString(SHARED_PREFS_SELECTED_WORKSPACE_TITLE, "") ?: return null
-    val organizationId = getString(SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID, "")?.toUUID() ?: return null
+    val organizationId =
+        getString(SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID, "")?.toUUID() ?: return null
     return Workspace(id, title, organizationId)
 }
 
@@ -93,7 +94,10 @@ fun SharedPreferences.saveSelectedWorkspace(workspace: Workspace) {
     edit()
         .putString(SHARED_PREFS_SELECTED_WORKSPACE_ID, workspace.id.toString())
         .putString(SHARED_PREFS_SELECTED_WORKSPACE_TITLE, workspace.title)
-        .putString(SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID, workspace.organizationId.toString())
+        .putString(
+            SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID,
+            workspace.organizationId.toString()
+        )
         .apply()
 }
 

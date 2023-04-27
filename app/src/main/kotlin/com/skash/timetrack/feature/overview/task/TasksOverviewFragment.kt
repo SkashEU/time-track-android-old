@@ -22,7 +22,9 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
 
     private val adapter = TaskGroupListAdapter()
 
-    private val trackingBottomSheet = TaskTimerBottomSheet()
+    private val trackingBottomSheet = TaskTimerBottomSheet(onNewEntryCreated = {
+        viewModel.attachTask(it)
+    })
 
     private val loadingDialog by lazy {
         DefaultLoadingDialog(requireContext())

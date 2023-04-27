@@ -2,12 +2,14 @@ package com.skash.timetrack.core.repository
 
 import android.content.Context
 import com.skash.timetrack.api.network.api.UserApi
+import com.skash.timetrack.api.network.model.SelectedWorkspaceInput
 import com.skash.timetrack.api.network.model.UserInput
 import com.skash.timetrack.core.helper.sharedprefs.getAuthData
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.core.model.Avatar
 import com.skash.timetrack.core.model.BackupCode
 import com.skash.timetrack.core.model.User
+import com.skash.timetrack.core.model.Workspace
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -53,6 +55,17 @@ class ApiUserRepository @Inject constructor(
             this.email = email
             this.password = password
         }).map {
+            User(it)
+        }
+    }
+
+    override fun changeSelectedWorkspace(workspace: Workspace): Observable<User> {
+        return userApi.usersMeSelectedWorkspacePut(
+            context.getPrefs().getAuthData().bearer,
+            SelectedWorkspaceInput().apply {
+                this.workspaceId = workspace.id
+            }
+        ).map {
             User(it)
         }
     }
