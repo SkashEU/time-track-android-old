@@ -37,8 +37,6 @@ class WorkTimeOverviewViewModel @Inject constructor(
         workTimeGroupsStream
             .subscribe(_workTimeGroupsLiveData::postValue)
             .addTo(subscriptions)
-
-        fetchWorkTimes()
     }
 
     fun attachWorkTime(workTime: WorkTime) {
@@ -48,7 +46,7 @@ class WorkTimeOverviewViewModel @Inject constructor(
         workTimeGroupsSubject.onNext(State.Success(groupWorkTimes(updatedList)))
     }
 
-    private fun fetchWorkTimes() {
+    fun fetchWorkTimes() {
         workTimeRepository.fetchWorkTimes()
             .doOnNext {
                 workTimeCacheSubject.onNext(it)

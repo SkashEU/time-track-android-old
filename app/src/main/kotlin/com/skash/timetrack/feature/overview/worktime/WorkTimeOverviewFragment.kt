@@ -42,10 +42,15 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
         }
 
         viewModel.workTimeGroupsLiveData.observe(viewLifecycleOwner) { state ->
-            state.handle(requireContext(), loadingDialog, onSuccess = { groups ->
+            state.handle(requireContext(), null, onSuccess = { groups ->
                 adapter.submitList(groups)
             })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchWorkTimes()
     }
 
     override fun onDestroyView() {

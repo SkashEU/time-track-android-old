@@ -31,15 +31,12 @@ class TasksOverviewViewModel @Inject constructor(
 
     private val taskCacheSubject = BehaviorSubject.create<List<Task>>()
 
-
     private val subscriptions = CompositeDisposable()
 
     init {
         taskGroupsStream
             .subscribe(_taskGroupsLiveData::postValue)
             .addTo(subscriptions)
-
-        fetchTasks()
     }
 
     fun attachTask(task: Task) {
@@ -49,7 +46,7 @@ class TasksOverviewViewModel @Inject constructor(
         taskGroupsSubject.onNext(State.Success(groupTasks(updatedList)))
     }
 
-    private fun fetchTasks() {
+    fun fetchTasks() {
         taskRepository.fetchTasks()
             .doOnNext {
                 taskCacheSubject.onNext(it)

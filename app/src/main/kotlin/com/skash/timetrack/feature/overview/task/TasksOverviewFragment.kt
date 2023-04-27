@@ -43,10 +43,15 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
         }
 
         viewModel.taskGroupsLiveData.observe(viewLifecycleOwner) { state ->
-            state.handle(requireContext(), loadingDialog, onSuccess = { groups ->
+            state.handle(requireContext(), null, onSuccess = { groups ->
                 adapter.submitList(groups)
             })
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchTasks()
     }
 
     override fun onDestroyView() {
