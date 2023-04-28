@@ -9,6 +9,7 @@ import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.TimerStatus
 import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.repository.WorkTimeCacheRepository
 import com.skash.timetrack.core.repository.WorkTimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkTimeViewModel @Inject constructor(
-    private val workTimeRepository: WorkTimeRepository
+    private val workTimeRepository: WorkTimeRepository,
+    private val workTimeCacheRepository: WorkTimeCacheRepository
 ) : ViewModel() {
 
     private val timerStatusSubject = BehaviorSubject.create<TimerStatus>()
@@ -69,6 +71,12 @@ class WorkTimeViewModel @Inject constructor(
             duration = duration
         )
         workTimeRepository.createWorkTime(time)
+            .flatMap { workTime ->
+                workTimeCacheRepository.cacheWorkTime(listOf(workTime))
+                    .map {
+                        workTime
+                    }
+            }
             .toState {
                 ErrorType.ProjectTimeSave
             }

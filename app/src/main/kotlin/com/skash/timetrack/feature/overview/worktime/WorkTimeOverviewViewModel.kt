@@ -39,13 +39,6 @@ class WorkTimeOverviewViewModel @Inject constructor(
             .addTo(subscriptions)
     }
 
-    fun attachWorkTime(workTime: WorkTime) {
-        val cachedWorkTimes = workTimeCacheSubject.value ?: emptyList()
-        val updatedList = cachedWorkTimes + workTime
-        workTimeCacheSubject.onNext(updatedList)
-        workTimeGroupsSubject.onNext(State.Success(groupWorkTimes(updatedList)))
-    }
-
     fun fetchWorkTimes() {
         workTimeRepository.fetchWorkTime()
             .doOnNext {

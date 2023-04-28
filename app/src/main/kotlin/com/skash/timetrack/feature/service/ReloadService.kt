@@ -4,7 +4,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.skash.timetrack.core.exception.MissingTimerActionException
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.skash.timetrack.core.repository.TaskCacheRepository
+import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.WorkTimeCacheRepository
 import com.skash.timetrack.core.repository.WorkTimeRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,10 +24,18 @@ class ReloadService : Service() {
     @Inject
     lateinit var workTimeRepository: WorkTimeRepository
 
+
+    @Inject
+    lateinit var taskCacheRepository: TaskCacheRepository
+
+    @Inject
+    lateinit var taskRepository: TaskRepository
+
     private val subscriptions = CompositeDisposable()
 
     companion object {
         const val RELOAD_ACTION = "reload_action"
+        const val RELOADED_ACTION = "reloaded_action"
 
         const val RELOAD_WORK_TIME = "reload_work_time"
         const val RELOAD_TASKS = "reload_tasks"
@@ -36,7 +46,7 @@ class ReloadService : Service() {
         when (intent?.getStringExtra(RELOAD_ACTION)) {
             RELOAD_WORK_TIME -> reloadWorkTime()
             RELOAD_TASKS -> reloadTasks()
-            else -> throw MissingTimerActionException("Cant start service without a action!")
+            else -> Log.d(javaClass.name, "Reload Service called without a action")
         }
 
         return START_STICKY
@@ -55,6 +65,7 @@ class ReloadService : Service() {
             }
             .subscribeBy(
                 onNext = {
+                    postReloadedBroadcast()
                     Log.d(javaClass.name, "Successfully reloaded workTime")
                 },
                 onError = {
@@ -64,9 +75,34 @@ class ReloadService : Service() {
     }
 
     private fun reloadTasks() {
-
+        taskRepository.fetchTasks()
+            .flatMap { tasks ->
+                taskCacheRepository.clearCache()
+                    .map {
+                        tasks
+                    }
+            }
+            .flatMap {
+                taskCacheRepository.cacheTasks(it)
+            }
+            .subscribeBy(
+                onNext = {
+                    postReloadedBroadcast()
+                    Log.d(javaClass.name, "Successfully reloaded tasks")
+                },
+                onError = {
+                    Log.d(javaClass.name, "Failed to reloaded tasks", it)
+                }
+            ).addTo(subscriptions)
     }
 
+    private fun postReloadedBroadcast() {
+        LocalBroadcastManager.getInstance(
+            this
+        ).sendBroadcast(Intent().apply {
+            action = RELOADED_ACTION
+        })
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

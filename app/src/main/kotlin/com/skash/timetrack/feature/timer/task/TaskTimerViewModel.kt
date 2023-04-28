@@ -11,11 +11,11 @@ import com.skash.timetrack.core.model.Project
 import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TimerStatus
 import com.skash.timetrack.core.repository.ProjectRepository
+import com.skash.timetrack.core.repository.TaskCacheRepository
 import com.skash.timetrack.core.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.Date
@@ -24,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskTimerViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
+    private val taskCacheRepository: TaskCacheRepository,
     private val projectRepository: ProjectRepository
 ) : ViewModel() {
 
@@ -76,7 +77,7 @@ class TaskTimerViewModel @Inject constructor(
             .toState {
                 ErrorType.ProjectFetch
             }
-            .subscribe{
+            .subscribe {
                 projectsStateSubject.onNext(it)
             }
             .addTo(subscriptions)
@@ -102,6 +103,12 @@ class TaskTimerViewModel @Inject constructor(
             duration = duration
         )
         taskRepository.createTask(time)
+            .flatMap { task ->
+                taskCacheRepository.cacheTasks(listOf(task))
+                    .map {
+                        task
+                    }
+            }
             .toState {
                 ErrorType.ProjectTimeSave
             }

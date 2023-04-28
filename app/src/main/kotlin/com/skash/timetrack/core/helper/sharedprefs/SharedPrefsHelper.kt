@@ -2,8 +2,7 @@ package com.skash.timetrack.core.helper.sharedprefs
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import com.skash.timetrack.TimeTrack
 import com.skash.timetrack.core.helper.string.toUUID
 import com.skash.timetrack.core.model.AuthData
 import com.skash.timetrack.core.model.Avatar
@@ -22,30 +21,19 @@ private const val SHARED_PREFS_NAME = "secret_shared_prefs"
 
 private const val SHARED_PREFS_AUTH_DATA = "auth_data"
 
-private const val SHARED_PREFS_SELF_USER_ID = "self_user_id"
+const val SHARED_PREFS_SELF_USER_ID = "self_user_id"
 private const val SHARED_PREFS_SELF_USER_EMAIL = "self_user_email"
 private const val SHARED_PREFS_SELF_USER_AVATAR = "self_user_avatar"
 private const val SHARED_PREFS_SELF_USER_FIRST_NAME = "self_user_first_name"
 private const val SHARED_PREFS_SELF_USER_LAST_NAME = "self_user_last_name"
 
-private const val SHARED_PREFS_SELECTED_WORKSPACE_ID = "selected_workspace_id"
+const val SHARED_PREFS_SELECTED_WORKSPACE_ID = "selected_workspace_id"
 private const val SHARED_PREFS_SELECTED_WORKSPACE_TITLE = "selected_workspace_title"
 private const val SHARED_PREFS_SELECTED_WORKSPACE_ORGANIZATION_ID =
     "selected_workspace_organization_id"
 
-
 fun Context.getPrefs(): SharedPreferences {
-    val masterKey = MasterKey.Builder(this)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
-
-    return EncryptedSharedPreferences.create(
-        this,
-        SHARED_PREFS_NAME,
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    return (applicationContext as TimeTrack).sharedPreferences
 }
 
 fun SharedPreferences.saveAuthData(authData: AuthData) {

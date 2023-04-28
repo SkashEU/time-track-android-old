@@ -100,6 +100,7 @@ class WorkTimeBottomSheet(
             creationState.handle(requireContext(), loadingDialog, onSuccess = {
                 onNewEntryCreated(it)
                 updateTimer(0)
+                dismiss()
             })
         }
     }

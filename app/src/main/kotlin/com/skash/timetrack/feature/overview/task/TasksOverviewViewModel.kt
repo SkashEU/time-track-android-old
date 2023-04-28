@@ -9,7 +9,7 @@ import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TaskGroup
 import com.skash.timetrack.core.model.TaskSection
-import com.skash.timetrack.core.repository.TaskRepository
+import com.skash.timetrack.core.repository.TaskCacheRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksOverviewViewModel @Inject constructor(
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskCacheRepository
 ) : ViewModel() {
 
     private val taskGroupsSubject = BehaviorSubject.create<State<List<TaskGroup>>>()
@@ -37,13 +37,6 @@ class TasksOverviewViewModel @Inject constructor(
         taskGroupsStream
             .subscribe(_taskGroupsLiveData::postValue)
             .addTo(subscriptions)
-    }
-
-    fun attachTask(task: Task) {
-        val cachedTasks = taskCacheSubject.value ?: emptyList()
-        val updatedList = cachedTasks + task
-        taskCacheSubject.onNext(updatedList)
-        taskGroupsSubject.onNext(State.Success(groupTasks(updatedList)))
     }
 
     fun fetchTasks() {

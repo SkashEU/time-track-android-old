@@ -26,8 +26,10 @@ import com.skash.timetrack.core.repository.ProfileSectionRepository
 import com.skash.timetrack.core.repository.ProjectColorRepository
 import com.skash.timetrack.core.repository.ProjectRepository
 import com.skash.timetrack.core.repository.RealmProjectColorRepository
+import com.skash.timetrack.core.repository.RealmTaskCacheRepository
 import com.skash.timetrack.core.repository.RealmWorkTimeCacheRepository
 import com.skash.timetrack.core.repository.SharedPrefsProfileSectionRepository
+import com.skash.timetrack.core.repository.TaskCacheRepository
 import com.skash.timetrack.core.repository.TaskRepository
 import com.skash.timetrack.core.repository.TeamRepository
 import com.skash.timetrack.core.repository.UserRepository
@@ -80,6 +82,14 @@ object AppModule {
         scheduler: Scheduler
     ): WorkTimeCacheRepository {
         return RealmWorkTimeCacheRepository(scheduler)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTaskCacheRepository(
+        scheduler: Scheduler
+    ): TaskCacheRepository {
+        return RealmTaskCacheRepository(scheduler)
     }
 
     @Provides

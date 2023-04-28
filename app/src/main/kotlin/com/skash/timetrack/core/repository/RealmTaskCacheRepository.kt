@@ -1,23 +1,23 @@
 package com.skash.timetrack.core.repository
 
-import com.skash.timetrack.core.cache.model.RealmWorkTime
-import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.cache.model.RealmTask
+import com.skash.timetrack.core.model.Task
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
 import io.realm.Realm
 import io.realm.Sort
 import javax.inject.Inject
 
-class RealmWorkTimeCacheRepository @Inject constructor(
+class RealmTaskCacheRepository @Inject constructor(
     private val scheduler: Scheduler
-) : WorkTimeCacheRepository {
+) : TaskCacheRepository {
 
-    override fun cacheWorkTime(workTime: List<WorkTime>): Observable<Unit> {
+    override fun cacheTasks(tasks: List<Task>): Observable<Unit> {
         return Observable.create { emitter ->
             Realm.getDefaultInstance().use { realm ->
                 realm.beginTransaction()
-                realm.insert(workTime.map {
-                    RealmWorkTime(it)
+                realm.insert(tasks.map {
+                    RealmTask(it)
                 })
                 realm.commitTransaction()
 
@@ -27,15 +27,15 @@ class RealmWorkTimeCacheRepository @Inject constructor(
         }.subscribeOn(scheduler)
     }
 
-    override fun fetchWorkTime(): Observable<List<WorkTime>> {
+    override fun fetchTasks(): Observable<List<Task>> {
         return Observable.create { emitter ->
             Realm.getDefaultInstance().use { realm ->
                 val workTimes = realm.copyFromRealm(
-                    realm.where(RealmWorkTime::class.java)
+                    realm.where(RealmTask::class.java)
                         .sort("startedAt", Sort.DESCENDING)
                         .findAll()
                 ).map {
-                    WorkTime(it)
+                    Task(it)
                 }
 
                 emitter.onNext(workTimes)
@@ -48,7 +48,7 @@ class RealmWorkTimeCacheRepository @Inject constructor(
         return Observable.create { emitter ->
             Realm.getDefaultInstance().use { realm ->
                 realm.beginTransaction()
-                realm.delete(RealmWorkTime::class.java)
+                realm.delete(RealmTask::class.java)
                 realm.commitTransaction()
 
                 emitter.onNext(Unit)
