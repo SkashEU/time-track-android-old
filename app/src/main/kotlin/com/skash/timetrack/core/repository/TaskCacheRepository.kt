@@ -8,4 +8,6 @@ interface TaskCacheRepository {
     fun cacheTasks(tasks: List<Task>): Observable<Unit>
     fun fetchTasks(): Observable<List<Task>>
     fun clearCache(): Observable<Unit>
+    fun markTaskAsFailedCall(task: Task): Observable<Unit>
+    fun fetchFailedCalls(): Observable<List<Task>>
 }

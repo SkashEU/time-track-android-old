@@ -1,5 +1,6 @@
 package com.skash.timetrack.core.repository
 
+import com.skash.timetrack.core.cache.model.RealmFailedTaskCalls
 import com.skash.timetrack.core.cache.model.RealmTask
 import com.skash.timetrack.core.model.Task
 import io.reactivex.rxjava3.core.Observable
@@ -45,7 +46,7 @@ class RealmTaskCacheRepository @Inject constructor(
     }
 
     override fun clearCache(): Observable<Unit> {
-        return Observable.create { emitter ->
+        return Observable.create<Unit> { emitter ->
             Realm.getDefaultInstance().use { realm ->
                 realm.beginTransaction()
                 realm.delete(RealmTask::class.java)
@@ -54,6 +55,35 @@ class RealmTaskCacheRepository @Inject constructor(
                 emitter.onNext(Unit)
                 emitter.onComplete()
             }
+        }.subscribeOn(scheduler)
+    }
+
+    override fun markTaskAsFailedCall(task: Task): Observable<Unit> {
+        return Observable.create { emitter ->
+            Realm.getDefaultInstance().use { realm ->
+                realm.beginTransaction()
+                realm.insertOrUpdate(RealmFailedTaskCalls(task))
+                realm.commitTransaction()
+
+                emitter.onNext(Unit)
+                emitter.onComplete()
+            }
         }
+    }
+
+    override fun fetchFailedCalls(): Observable<List<Task>> {
+        return Observable.create { emitter ->
+            Realm.getDefaultInstance().use { realm ->
+                val workTimes = realm.copyFromRealm(
+                    realm.where(RealmFailedTaskCalls::class.java)
+                        .findAll()
+                ).map {
+                    Task(it)
+                }
+
+                emitter.onNext(workTimes)
+                emitter.onComplete()
+            }
+        }.subscribeOn(scheduler)
     }
 }

@@ -47,7 +47,7 @@ class TimeTrack : Application(), SharedPreferences.OnSharedPreferenceChangeListe
 
         return EncryptedSharedPreferences.create(
             this,
-            Companion.SHARED_PREFS_NAME,
+            SHARED_PREFS_NAME,
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM

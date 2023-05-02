@@ -1,6 +1,7 @@
 package com.skash.timetrack.core.model
 
 import com.skash.timetrack.api.network.model.TaskResponse
+import com.skash.timetrack.core.cache.model.RealmFailedTaskCalls
 import com.skash.timetrack.core.cache.model.RealmTask
 import java.util.Date
 import java.util.UUID
@@ -30,5 +31,13 @@ data class Task(
         startedAt = realmModel.startedAt,
         endedAt = realmModel.endedAt,
         duration = realmModel.duration
+    )
+
+    constructor(failModel: RealmFailedTaskCalls) : this(
+        project = failModel.project?.let { Project(it) },
+        description = failModel.description,
+        startedAt = failModel.startedAt,
+        endedAt = failModel.endedAt,
+        duration = failModel.duration
     )
 }

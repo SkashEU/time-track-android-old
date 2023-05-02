@@ -1,5 +1,6 @@
 package com.skash.timetrack.feature.timer.task
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,7 @@ import com.skash.timetrack.core.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.Date
@@ -103,6 +105,9 @@ class TaskTimerViewModel @Inject constructor(
             duration = duration
         )
         taskRepository.createTask(time)
+            .doOnError {
+                markTaskCallAsFailed(time)
+            }
             .flatMap { task ->
                 taskCacheRepository.cacheTasks(listOf(task))
                     .map {
@@ -116,5 +121,17 @@ class TaskTimerViewModel @Inject constructor(
                 taskTimeCreationStateSubject.onNext(creationState)
             }
             .addTo(subscriptions)
+    }
+
+    private fun markTaskCallAsFailed(task: Task) {
+        taskCacheRepository.markTaskAsFailedCall(task)
+            .subscribeBy(
+                onNext = {
+                    Log.d(javaClass.name, "Marked task as failed task.")
+                },
+                onError = {
+                    Log.d(javaClass.name, "Failed to mark task as failed task.")
+                }
+            ).addTo(subscriptions)
     }
 }
