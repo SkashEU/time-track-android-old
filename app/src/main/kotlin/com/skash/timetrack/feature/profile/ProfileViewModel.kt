@@ -9,7 +9,7 @@ import com.skash.timetrack.core.helper.rx.toState
 import com.skash.timetrack.core.helper.state.ErrorType
 import com.skash.timetrack.core.helper.state.State
 import com.skash.timetrack.core.menu.ProfileSection
-import com.skash.timetrack.core.menu.ProfileSectionEntryType
+import com.skash.timetrack.core.menu.ProfileSectionEntry
 import com.skash.timetrack.core.model.Avatar
 import com.skash.timetrack.core.repository.ProfileSectionRepository
 import com.skash.timetrack.core.repository.UserRepository
@@ -31,10 +31,10 @@ class ProfileViewModel @Inject constructor(
     private val _profileSectionLiveData = MutableLiveData<List<ProfileSection>>()
     val profileSectionLiveData: LiveData<List<ProfileSection>> get() = _profileSectionLiveData
 
-    private val profileSelectionSubject = BehaviorSubject.create<ProfileSectionEntryType>()
+    private val profileSelectionSubject = BehaviorSubject.create<ProfileSectionEntry>()
     private val profileSelectionStream = profileSelectionSubject.hide()
-    private val _profileSelectionLiveData = SingleLiveEvent<ProfileSectionEntryType>()
-    val profileSelectionLiveData: LiveData<ProfileSectionEntryType> get() = _profileSelectionLiveData
+    private val _profileSelectionLiveData = SingleLiveEvent<ProfileSectionEntry>()
+    val profileSelectionLiveData: LiveData<ProfileSectionEntry> get() = _profileSelectionLiveData
 
     private val avatarUploadStateSubject = BehaviorSubject.create<State<Avatar>>()
     private val avatarUploadStateStream = avatarUploadStateSubject.hide()
@@ -60,7 +60,7 @@ class ProfileViewModel @Inject constructor(
         fetchProfileSections()
     }
 
-    fun onProfileSectionClicked(entry: ProfileSectionEntryType) {
+    fun onProfileSectionClicked(entry: ProfileSectionEntry) {
         profileSelectionSubject.onNext(entry)
     }
 

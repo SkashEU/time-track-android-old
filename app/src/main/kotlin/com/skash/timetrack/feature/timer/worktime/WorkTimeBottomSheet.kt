@@ -6,8 +6,6 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.context.getWorkTimerStatus
 import com.skash.timetrack.core.helper.context.moveWorkTimeTimerToBackground
@@ -18,14 +16,13 @@ import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.TimerStatus
 import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.util.BindableBottomSheet
 import com.skash.timetrack.databinding.FragmentWorktimeBinding
 import com.skash.timetrack.feature.broadcast.ElapsedTimeBroadcastReceiver
 import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
 import com.skash.timetrack.feature.service.TimerService
 import com.skash.timetrack.feature.service.WorkTimeTimerService
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,10 +30,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class WorkTimeBottomSheet(
     val onNewEntryCreated: (WorkTime) -> Unit
-) : BottomSheetDialogFragment(R.layout.fragment_worktime) {
-
-    private var _binding: FragmentWorktimeBinding? = null
-    private val binding get() = _binding!!
+) : BindableBottomSheet<FragmentWorktimeBinding>(R.layout.fragment_worktime) {
 
     private val viewModel: WorkTimeViewModel by viewModels()
 
@@ -60,14 +54,9 @@ class WorkTimeBottomSheet(
         DefaultLoadingDialog(requireContext())
     }
 
-    private val subscriptions = CompositeDisposable()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentWorktimeBinding.bind(view)
-
-        bindActions()
         setupView()
 
         viewModel.timerActionLiveData.observe(viewLifecycleOwner) { shouldStartTimer ->
@@ -105,12 +94,14 @@ class WorkTimeBottomSheet(
         }
     }
 
-    private fun bindActions() {
-        binding.timerButton.clicks()
-            .subscribe {
-                viewModel.startOrStopTimer()
-            }
-            .addTo(subscriptions)
+    override fun createBindingInstance(view: View): FragmentWorktimeBinding {
+        return FragmentWorktimeBinding.bind(view)
+    }
+
+    override fun bindActions() {
+        binding.timerButton.setOnClickListener {
+            viewModel.startOrStopTimer()
+        }
     }
 
     override fun onResume() {
@@ -162,11 +153,5 @@ class WorkTimeBottomSheet(
         val today = Date()
         binding.dayTextView.text = dayFormatter.format(today)
         binding.dateTextView.text = dateFormatter.format(today)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.clear()
-        _binding = null
     }
 }

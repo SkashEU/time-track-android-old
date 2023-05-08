@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.MainActivity
 import com.skash.timetrack.core.helper.sharedprefs.getAuthData
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
@@ -21,7 +20,6 @@ import com.skash.timetrack.feature.auth.reset.PasswordResetBottomSheet
 import com.skash.timetrack.feature.auth.twofa.TwoFactorAuthBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 
 
 @AndroidEntryPoint
@@ -87,20 +85,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun bindActions() {
-        binding.loginButton.clicks()
-            .subscribe {
-                viewModel.authenticateUser(
-                    binding.emailEditText.text.toString(),
-                    binding.passwordEditText.text.toString()
-                )
-            }
-            .addTo(subscriptions)
+        binding.loginButton.setOnClickListener {
+            viewModel.authenticateUser(
+                binding.emailEditText.text.toString(),
+                binding.passwordEditText.text.toString()
+            )
+        }
 
-        binding.registerButton.clicks()
-            .subscribe {
-                RegistrationActivity.launch(this)
-            }
-            .addTo(subscriptions)
+        binding.registerButton.setOnClickListener {
+            RegistrationActivity.launch(this)
+        }
 
         binding.forgotPasswordTextView.setOnClickListener {
             passwordResetBottomSheet.show(supportFragmentManager, null)
@@ -110,10 +104,5 @@ class LoginActivity : AppCompatActivity() {
     private fun launchMainActivity() {
         MainActivity.launch(this)
         finish()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        subscriptions.clear()
     }
 }

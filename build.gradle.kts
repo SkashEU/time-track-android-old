@@ -12,10 +12,10 @@ buildscript {
 }
 
 plugins {
-    id("com.android.application") version "8.2.0-alpha01" apply false
-    id("com.android.library") version "8.2.0-alpha01" apply false
+    id("com.android.application") version "8.2.0-alpha02" apply false
+    id("com.android.library") version "8.2.0-alpha02" apply false
     id("org.jetbrains.kotlin.android") version "1.8.0" apply false
-    id("com.android.test") version "8.2.0-alpha01" apply false
+    id("com.android.test") version "8.2.0-alpha02" apply false
     id("androidx.baselineprofile") version "1.2.0-SNAPSHOT" apply false
     id("com.google.dagger.hilt.android") version "2.45" apply false
     id("org.jetbrains.kotlin.kapt") version "1.8.10"

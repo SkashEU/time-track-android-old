@@ -8,9 +8,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.jakewharton.rxbinding4.view.clicks
-import com.jakewharton.rxbinding4.widget.itemClickEvents
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.context.getTaskTimerStatus
 import com.skash.timetrack.core.helper.context.moveTaskTimerToBackground
@@ -22,15 +19,13 @@ import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.Project
 import com.skash.timetrack.core.model.Task
 import com.skash.timetrack.core.model.TimerStatus
-import com.skash.timetrack.core.model.WorkTime
+import com.skash.timetrack.core.util.BindableBottomSheet
 import com.skash.timetrack.databinding.FragmentProjectTimeBinding
 import com.skash.timetrack.feature.broadcast.ElapsedTimeBroadcastReceiver
 import com.skash.timetrack.feature.broadcast.TimerStatusBroadcastReceiver
 import com.skash.timetrack.feature.service.TaskTimerService
 import com.skash.timetrack.feature.service.TimerService
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,10 +33,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class TaskTimerBottomSheet(
     val onNewEntryCreated: (Task) -> Unit
-) : BottomSheetDialogFragment(R.layout.fragment_project_time) {
-
-    private var _binding: FragmentProjectTimeBinding? = null
-    private val binding get() = _binding!!
+) : BindableBottomSheet<FragmentProjectTimeBinding>(R.layout.fragment_project_time) {
 
     private val viewModel: TaskTimerViewModel by viewModels()
 
@@ -73,16 +65,11 @@ class TaskTimerBottomSheet(
         DefaultLoadingDialog(requireContext())
     }
 
-    private val subscriptions = CompositeDisposable()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentProjectTimeBinding.bind(view)
-
         (binding.projectInputLayout.editText as? AutoCompleteTextView)?.setAdapter(dropdownAdapter)
 
-        bindActions()
         setupView()
 
         viewModel.timerActionLiveData.observe(viewLifecycleOwner) { shouldStartTimer ->
@@ -127,22 +114,19 @@ class TaskTimerBottomSheet(
         }
     }
 
-    private fun bindActions() {
-        binding.timerButton.clicks()
-            .subscribe {
-                viewModel.startOrStopTimer()
-            }
-            .addTo(subscriptions)
+    override fun createBindingInstance(view: View): FragmentProjectTimeBinding {
+        return FragmentProjectTimeBinding.bind(view)
+    }
 
-        binding.projectMenu.itemClickEvents()
-            .map {
-                it.position
-            }
-            .subscribe {
-                val client = dropdownAdapter.getItem(it) ?: return@subscribe
-                viewModel.setProject(client)
-            }
-            .addTo(subscriptions)
+    override fun bindActions() {
+        binding.timerButton.setOnClickListener {
+            viewModel.startOrStopTimer()
+        }
+
+        binding.projectMenu.setOnItemClickListener { _, _, position, _ ->
+            val client = dropdownAdapter.getItem(position) ?: return@setOnItemClickListener
+            viewModel.setProject(client)
+        }
     }
 
     override fun onResume() {
@@ -194,11 +178,5 @@ class TaskTimerBottomSheet(
         val today = Date()
         binding.dayTextView.text = dayFormatter.format(today)
         binding.dateTextView.text = dateFormatter.format(today)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.clear()
-        _binding = null
     }
 }

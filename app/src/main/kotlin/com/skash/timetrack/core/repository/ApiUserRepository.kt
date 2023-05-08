@@ -25,7 +25,7 @@ class ApiUserRepository @Inject constructor(
         return Observable.just(Unit)
     }
 
-    override fun fetchBackupCodes(): Observable<List<BackupCode>> {
+    override fun fetchBackupCodes(password: String): Observable<List<BackupCode>> {
         return Observable.just(
             listOf(
                 BackupCode("ANENEN"),

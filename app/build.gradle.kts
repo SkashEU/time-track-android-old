@@ -64,8 +64,6 @@ dependencies {
     // Rx
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
-    implementation("com.jakewharton.rxbinding4:rxbinding:4.0.0")
-    implementation("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx3:1.6.4")
 
     // Realm
@@ -81,16 +79,19 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
+
+
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("androidx.core:core-ktx:1.10.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
-    implementation("androidx.profileinstaller:profileinstaller:1.3.0")
+    implementation("androidx.profileinstaller:profileinstaller:1.3.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

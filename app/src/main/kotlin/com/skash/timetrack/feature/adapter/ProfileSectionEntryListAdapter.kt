@@ -30,7 +30,7 @@ class ProfileSectionEntryViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(entry: ProfileSectionEntry, onEntryClicked: (ProfileSectionEntry) -> Unit) {
-        binding.titleTextView.setText(entry.type.titleId)
+        binding.titleTextView.setText(entry.titleId)
 
         binding.root.setOnClickListener {
             onEntryClicked(entry)
@@ -43,7 +43,7 @@ class ProfileSectionEntryDiffUtil : ItemCallback<ProfileSectionEntry>() {
         oldItem: ProfileSectionEntry,
         newItem: ProfileSectionEntry
     ): Boolean {
-        return oldItem.type == newItem.type
+        return oldItem.titleId == newItem.titleId
     }
 
     override fun areContentsTheSame(

@@ -16,4 +16,8 @@ sealed class ProfileSection(@StringRes val titleId: Int, val items: List<Profile
     class Workspace(items: List<ProfileSectionEntry>) : ProfileSection(
         R.string.profile_section_workspace, items
     )
+
+    class Invites(items: List<ProfileSectionEntry>): ProfileSection(
+        R.string.profile_section_invites, items
+    )
 }

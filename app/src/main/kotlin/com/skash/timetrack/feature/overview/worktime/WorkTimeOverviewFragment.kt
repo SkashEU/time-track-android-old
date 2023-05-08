@@ -4,11 +4,11 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.state.handle
+import com.skash.timetrack.core.util.BindableFragment
 import com.skash.timetrack.databinding.FragmentOverviewWorkTimeBinding
 import com.skash.timetrack.feature.adapter.WorkTimeGroupListAdapter
 import com.skash.timetrack.feature.broadcast.ReloadBroadcastReceiver
@@ -17,10 +17,8 @@ import com.skash.timetrack.feature.timer.worktime.WorkTimeBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) {
-
-    private var _binding: FragmentOverviewWorkTimeBinding? = null
-    private val binding get() = _binding!!
+class WorkTimeOverviewFragment :
+    BindableFragment<FragmentOverviewWorkTimeBinding>(R.layout.fragment_overview_work_time) {
 
     private val viewModel: WorkTimeOverviewViewModel by viewModels()
 
@@ -38,8 +36,6 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentOverviewWorkTimeBinding.bind(view)
-
         binding.recyclerView.adapter = adapter
 
         binding.timeTrackFab.setOnClickListener {
@@ -52,6 +48,12 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
             })
         }
     }
+
+    override fun createBindingInstance(view: View): FragmentOverviewWorkTimeBinding {
+        return FragmentOverviewWorkTimeBinding.bind(view)
+    }
+
+    override fun bindActions() {}
 
     override fun onResume() {
         super.onResume()
@@ -69,10 +71,5 @@ class WorkTimeOverviewFragment : Fragment(R.layout.fragment_overview_work_time) 
         LocalBroadcastManager.getInstance(
             requireContext()
         ).unregisterReceiver(reloadBroadcastReceiver)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

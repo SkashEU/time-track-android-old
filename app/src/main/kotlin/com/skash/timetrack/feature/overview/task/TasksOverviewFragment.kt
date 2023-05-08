@@ -3,12 +3,12 @@ package com.skash.timetrack.feature.overview.task
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
+import com.skash.timetrack.core.util.BindableFragment
 import com.skash.timetrack.databinding.FragmentOverviewTasksBinding
 import com.skash.timetrack.feature.adapter.TaskGroupListAdapter
 import com.skash.timetrack.feature.broadcast.ReloadBroadcastReceiver
@@ -17,10 +17,8 @@ import com.skash.timetrack.feature.timer.task.TaskTimerBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
-
-    private var _binding: FragmentOverviewTasksBinding? = null
-    private val binding get() = _binding!!
+class TasksOverviewFragment :
+    BindableFragment<FragmentOverviewTasksBinding>(R.layout.fragment_overview_tasks) {
 
     private val viewModel: TasksOverviewViewModel by viewModels()
 
@@ -34,14 +32,8 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
         viewModel.fetchTasks()
     })
 
-    private val loadingDialog by lazy {
-        DefaultLoadingDialog(requireContext())
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentOverviewTasksBinding.bind(view)
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.setHasFixedSize(true)
@@ -56,6 +48,12 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
             })
         }
     }
+
+    override fun createBindingInstance(view: View): FragmentOverviewTasksBinding {
+        return FragmentOverviewTasksBinding.bind(view)
+    }
+
+    override fun bindActions() {}
 
     override fun onResume() {
         super.onResume()
@@ -73,10 +71,5 @@ class TasksOverviewFragment : Fragment(R.layout.fragment_overview_tasks) {
         LocalBroadcastManager.getInstance(
             requireContext()
         ).unregisterReceiver(reloadBroadcastReceiver)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

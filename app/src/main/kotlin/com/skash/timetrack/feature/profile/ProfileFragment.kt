@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -15,9 +14,10 @@ import com.skash.timetrack.core.helper.sharedprefs.getSelectedWorkspace
 import com.skash.timetrack.core.helper.sharedprefs.getSelfUser
 import com.skash.timetrack.core.helper.sharedprefs.saveSelfUser
 import com.skash.timetrack.core.helper.state.handle
-import com.skash.timetrack.core.menu.ProfileSectionEntryType
+import com.skash.timetrack.core.menu.ProfileSectionEntry
 import com.skash.timetrack.core.model.User
 import com.skash.timetrack.core.model.Workspace
+import com.skash.timetrack.core.util.BindableFragment
 import com.skash.timetrack.databinding.FragmentProfileBinding
 import com.skash.timetrack.feature.adapter.ProfileSectionListAdapter
 import com.skash.timetrack.feature.auth.login.LoginActivity
@@ -28,27 +28,30 @@ import com.skash.timetrack.feature.workspace.WorkspaceSelectionFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
-
-    private var _binding: FragmentProfileBinding? = null
-    private val binding get() = _binding!!
+class ProfileFragment : BindableFragment<FragmentProfileBinding>(
+    R.layout.fragment_profile
+) {
 
     private val viewModel: ProfileViewModel by viewModels()
 
-    private val adapter = ProfileSectionListAdapter(onEntryClicked = {
-        viewModel.onProfileSectionClicked(it.type)
-    })
-
-    private val manageAvatarBottomSheet = ManageAvatarBottomSheet(onOptionSelected = { option ->
-        when (option) {
-            ManageAvatarOption.REMOVE -> TODO()
-            ManageAvatarOption.MODIFY -> photoPickContract.launch(
-                PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
+    private val adapter = ProfileSectionListAdapter(
+        onEntryClicked = {
+            viewModel.onProfileSectionClicked(it)
         }
-    })
+    )
+
+    private val manageAvatarBottomSheet = ManageAvatarBottomSheet(
+        onOptionSelected = { option ->
+            when (option) {
+                ManageAvatarOption.REMOVE -> TODO()
+                ManageAvatarOption.MODIFY -> photoPickContract.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            }
+        }
+    )
 
     private val photoPickContract = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -68,12 +71,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         viewModel.updateAvatar(avatarBytes)
     }
 
+    override fun createBindingInstance(view: View): FragmentProfileBinding {
+        return FragmentProfileBinding.bind(view)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentProfileBinding.bind(view)
-
-        bindActions()
         observeWorkspaceChanges()
         observeUsernameChanges()
 
@@ -102,12 +106,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         viewModel.profileSelectionLiveData.observe(viewLifecycleOwner) {
             val navDirection = when (it) {
-                ProfileSectionEntryType.USERNAME -> ProfileFragmentDirections.navigateToNameChange()
-                ProfileSectionEntryType.EMAIL -> TODO()
-                ProfileSectionEntryType.PASSWORD -> TODO()
-                ProfileSectionEntryType.WORKSPACE -> ProfileFragmentDirections.navigateToWorkspaceSelection()
-                ProfileSectionEntryType.TWO_FACTOR_AUTH -> TODO()
-                ProfileSectionEntryType.BACKUP_CODES -> ProfileFragmentDirections.navigateToBackupCodes()
+                ProfileSectionEntry.USERNAME -> ProfileFragmentDirections.navigateToNameChange()
+                ProfileSectionEntry.EMAIL -> TODO()
+                ProfileSectionEntry.PASSWORD -> TODO()
+                ProfileSectionEntry.WORKSPACE -> ProfileFragmentDirections.navigateToWorkspaceSelection()
+                ProfileSectionEntry.TWO_FACTOR_AUTH -> TODO()
+                ProfileSectionEntry.BACKUP_CODES -> ProfileFragmentDirections.navigateToBackupCodes()
+                ProfileSectionEntry.MY_INVITES -> TODO()
             }
 
             findNavController().navigate(
@@ -116,7 +121,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
     }
 
-    private fun bindActions() {
+    override fun bindActions() {
         binding.logoutButton.setOnClickListener {
             requireContext().getPrefs().clearAuthData()
             LoginActivity.launch(requireContext())
@@ -152,10 +157,5 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         Glide.with(requireContext())
             .load(user.avatar.avatarURL())
             .into(binding.pfpImageView)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

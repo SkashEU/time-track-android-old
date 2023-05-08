@@ -4,22 +4,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
-import com.skash.timetrack.core.helper.dialog.FullscreenDialogFragment
 import com.skash.timetrack.core.helper.sharedprefs.getUserName
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
+import com.skash.timetrack.core.util.BindableFullscreenDialog
 import com.skash.timetrack.databinding.FragmentNameChangeBinding
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 
 @AndroidEntryPoint
-class NameChangeFragment : FullscreenDialogFragment(R.layout.fragment_name_change) {
-
-    private var _binding: FragmentNameChangeBinding? = null
-    private val binding get() = _binding!!
+class NameChangeFragment :
+    BindableFullscreenDialog<FragmentNameChangeBinding>(R.layout.fragment_name_change) {
 
     private val viewModel: NameChangeViewModel by viewModels()
 
@@ -27,18 +22,12 @@ class NameChangeFragment : FullscreenDialogFragment(R.layout.fragment_name_chang
         DefaultLoadingDialog(requireContext())
     }
 
-    private val subscriptions = CompositeDisposable()
-
     companion object {
         const val NAME_CHANGE = "name_change"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentNameChangeBinding.bind(view)
-
-        bindActions()
 
         binding.usernameEditText.setText(requireContext().getUserName())
 
@@ -50,20 +39,20 @@ class NameChangeFragment : FullscreenDialogFragment(R.layout.fragment_name_chang
         }
     }
 
-    private fun bindActions() {
-        binding.saveButton.clicks()
-            .subscribe {
-                viewModel.changeUsername(
-                    binding.usernameEditText.text.toString()
-                )
-            }
-            .addTo(subscriptions)
+    override fun createBindingInstance(view: View): FragmentNameChangeBinding {
+        return FragmentNameChangeBinding.bind(view)
+    }
 
-        binding.closeButton.clicks()
-            .subscribe {
-                dismiss()
-            }
-            .addTo(subscriptions)
+    override fun bindActions() {
+        binding.saveButton.setOnClickListener {
+            viewModel.changeUsername(
+                binding.usernameEditText.text.toString()
+            )
+        }
+
+        binding.closeButton.setOnClickListener {
+            dismiss()
+        }
     }
 
     private fun notifyCallerAboutUsernameChange() {
@@ -71,11 +60,5 @@ class NameChangeFragment : FullscreenDialogFragment(R.layout.fragment_name_chang
             NAME_CHANGE,
             binding.usernameEditText.text.toString()
         )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.clear()
-        _binding = null
     }
 }

@@ -11,27 +11,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.jakewharton.rxbinding4.view.clicks
-import com.jakewharton.rxbinding4.widget.itemClickEvents
 import com.skash.timetrack.R
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.helper.state.loading.LoadingDialog
 import com.skash.timetrack.core.model.Client
 import com.skash.timetrack.core.model.ProjectModifyWrapper
+import com.skash.timetrack.core.util.BindableBottomSheet
 import com.skash.timetrack.databinding.FragmentManageProjectBinding
 import com.skash.timetrack.feature.adapter.ProjectColorListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 
 @AndroidEntryPoint
-class ManageProjectFragment : BottomSheetDialogFragment(
+class ManageProjectFragment : BindableBottomSheet<FragmentManageProjectBinding>(
     R.layout.fragment_manage_project
 ) {
-    private var _binding: FragmentManageProjectBinding? = null
-    private val binding get() = _binding!!
 
     private val viewModel: ManageProjectViewModel by viewModels()
 
@@ -51,16 +45,12 @@ class ManageProjectFragment : BottomSheetDialogFragment(
         )
     }
 
-    private val subscriptions = CompositeDisposable()
-
     companion object {
         const val PROJECT = "key_project"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentManageProjectBinding.bind(view)
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 5)
         binding.recyclerView.adapter = adapter
@@ -100,30 +90,25 @@ class ManageProjectFragment : BottomSheetDialogFragment(
         }
     }
 
-    private fun bindActions() {
-        binding.saveButton.clicks()
-            .subscribe {
-                viewModel.createOrUpdateProject(
-                    binding.titleEditText.text.toString()
-                )
-            }
-            .addTo(subscriptions)
+    override fun createBindingInstance(view: View): FragmentManageProjectBinding {
+        return FragmentManageProjectBinding.bind(view)
+    }
 
-        binding.closeButton.clicks()
-            .subscribe {
-                dismiss()
-            }
-            .addTo(subscriptions)
+    override fun bindActions() {
+        binding.saveButton.setOnClickListener {
+            viewModel.createOrUpdateProject(
+                binding.titleEditText.text.toString()
+            )
+        }
 
-        binding.clientMenu.itemClickEvents()
-            .map {
-                it.position
-            }
-            .subscribe {
-                val client = dropdownAdapter.getItem(it) ?: return@subscribe
-                viewModel.setClient(client)
-            }
-            .addTo(subscriptions)
+        binding.closeButton.setOnClickListener {
+            dismiss()
+        }
+
+        binding.clientMenu.setOnItemClickListener { _, _, position, _ ->
+            val client = dropdownAdapter.getItem(position) ?: return@setOnItemClickListener
+            viewModel.setClient(client)
+        }
     }
 
     private fun notifyCallerAboutProjectChange(project: ProjectModifyWrapper) {
@@ -136,11 +121,5 @@ class ManageProjectFragment : BottomSheetDialogFragment(
         val dialog = BottomSheetDialog(requireContext(), theme)
         dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         return dialog
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.clear()
-        _binding = null
     }
 }

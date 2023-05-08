@@ -4,29 +4,22 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.jakewharton.rxbinding4.view.clicks
 import com.skash.timetrack.R
-import com.skash.timetrack.core.helper.context.reloadTasks
-import com.skash.timetrack.core.helper.dialog.FullscreenDialogFragment
 import com.skash.timetrack.core.helper.sharedprefs.getPrefs
 import com.skash.timetrack.core.helper.sharedprefs.saveSelectedWorkspace
 import com.skash.timetrack.core.helper.state.handle
 import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.model.Workspace
+import com.skash.timetrack.core.util.BindableFullscreenDialog
 import com.skash.timetrack.databinding.FragmentWorkspaceSelectionBinding
 import com.skash.timetrack.feature.adapter.OrganizationListAdapter
 import com.skash.timetrack.feature.adapter.WorkspaceListAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
 
 @AndroidEntryPoint
-class WorkspaceSelectionFragment : FullscreenDialogFragment(
+class WorkspaceSelectionFragment : BindableFullscreenDialog<FragmentWorkspaceSelectionBinding>(
     R.layout.fragment_workspace_selection
 ) {
-
-    private var _binding: FragmentWorkspaceSelectionBinding? = null
-    private val binding get() = _binding!!
 
     private val viewModel: WorkspaceSelectionViewModel by viewModels()
 
@@ -47,18 +40,12 @@ class WorkspaceSelectionFragment : FullscreenDialogFragment(
         DefaultLoadingDialog(requireContext())
     }
 
-    private val subscriptions = CompositeDisposable()
-
     companion object {
         const val WORKSPACE_UPDATE = "workspace_update"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding = FragmentWorkspaceSelectionBinding.bind(view)
-
-        bindActions()
 
         binding.workspaceRecyclerView.adapter = workspaceListAdapter
         binding.organizationRecyclerView.adapter = organizationListAdapter
@@ -84,18 +71,18 @@ class WorkspaceSelectionFragment : FullscreenDialogFragment(
         }
     }
 
-    private fun bindActions() {
-        binding.saveButton.clicks()
-            .subscribe {
-                viewModel.saveSelectedOptions()
-            }
-            .addTo(subscriptions)
+    override fun createBindingInstance(view: View): FragmentWorkspaceSelectionBinding {
+        return FragmentWorkspaceSelectionBinding.bind(view)
+    }
 
-        binding.closeButton.clicks()
-            .subscribe {
-                dismiss()
-            }
-            .addTo(subscriptions)
+    override fun bindActions() {
+        binding.saveButton.setOnClickListener {
+            viewModel.saveSelectedOptions()
+        }
+
+        binding.closeButton.setOnClickListener {
+            dismiss()
+        }
     }
 
     private fun notifyCallerAboutChanges(workspace: Workspace) {
@@ -103,11 +90,5 @@ class WorkspaceSelectionFragment : FullscreenDialogFragment(
             WORKSPACE_UPDATE,
             workspace
         )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.clear()
-        _binding = null
     }
 }

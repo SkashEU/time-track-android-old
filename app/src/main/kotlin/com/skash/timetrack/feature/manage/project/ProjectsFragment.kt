@@ -2,7 +2,6 @@ package com.skash.timetrack.feature.manage.project
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.skash.timetrack.R
@@ -11,6 +10,7 @@ import com.skash.timetrack.core.helper.state.loading.DefaultLoadingDialog
 import com.skash.timetrack.core.helper.state.loading.LoadingDialog
 import com.skash.timetrack.core.model.Project
 import com.skash.timetrack.core.model.ProjectModifyWrapper
+import com.skash.timetrack.core.util.BindableFragment
 import com.skash.timetrack.databinding.FragmentProjectsBinding
 import com.skash.timetrack.feature.adapter.ProjectListAdapter
 import com.skash.timetrack.feature.manage.ManageFragmentDirections
@@ -18,10 +18,7 @@ import com.skash.timetrack.feature.manage.project.manage.ManageProjectFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProjectsFragment : Fragment(R.layout.fragment_projects) {
-
-    private var _binding: FragmentProjectsBinding? = null
-    private val binding get() = _binding!!
+class ProjectsFragment : BindableFragment<FragmentProjectsBinding>(R.layout.fragment_projects) {
 
     private val viewModel: ProjectsViewModel by viewModels()
 
@@ -36,9 +33,6 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentProjectsBinding.bind(view)
-
-        bindActions()
         observeProjectChanges()
 
         binding.recyclerView.adapter = adapter
@@ -51,7 +45,11 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
         }
     }
 
-    private fun bindActions() {
+    override fun createBindingInstance(view: View): FragmentProjectsBinding {
+        return FragmentProjectsBinding.bind(view)
+    }
+
+    override fun bindActions() {
         binding.addFab.setOnClickListener {
             navigateToManageProject(null)
         }
@@ -71,10 +69,5 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
                 project
             )
         )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

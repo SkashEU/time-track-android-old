@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Observable
 
 interface UserRepository {
     fun changeUsername(username: String): Observable<Unit>
-    fun fetchBackupCodes(): Observable<List<BackupCode>>
+    fun fetchBackupCodes(password: String): Observable<List<BackupCode>>
     fun changeAvatar(avatar: ByteArray): Observable<Avatar>
     fun registerUser(name: String, email: String, password: String): Observable<User>
     fun changeSelectedWorkspace(workspace: Workspace): Observable<User>

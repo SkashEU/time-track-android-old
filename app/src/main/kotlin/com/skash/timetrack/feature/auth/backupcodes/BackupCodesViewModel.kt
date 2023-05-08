@@ -30,12 +30,10 @@ class BackupCodesViewModel @Inject constructor(
         backupCodeStream
             .subscribe(_backupCodeLiveData::postValue)
             .addTo(subscriptions)
-
-        fetchBackupCodes()
     }
 
-    private fun fetchBackupCodes() {
-        userDataRepository.fetchBackupCodes()
+    fun fetchBackupCodes(password: String) {
+        userDataRepository.fetchBackupCodes(password)
             .toState {
                 ErrorType.BackupCodesFetch
             }

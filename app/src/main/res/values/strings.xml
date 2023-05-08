@@ -71,13 +71,20 @@
     <string name="profile_entry_two_factor_auth">Two-factor authentication</string>
     <string name="profile_entry_workspace">Workspace</string>
     <string name="profile_entry_backup_codes">View Backup Codes</string>
+    <string name="profile_entry_my_invites">My Invites</string>
+
 
     <string name="profile_section_account_information">Account Information</string>
     <string name="profile_section_workspace">Workspace</string>
     <string name="profile_section_two_factor_auth">Two-Factor Authentication</string>
+    <string name="profile_section_invites">Invites</string>
+
 
     <!-- Roles -->
     <string name="role_admin_display_name">Admin</string>
     <string name="role_member_display_name">Member</string>
+
+    <!-- Backup Codes -->
+    <string name="backup_codes_view_codes_title">View backup codes</string>
 
 </resources>
